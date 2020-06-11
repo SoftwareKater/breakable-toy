@@ -1,0 +1,32 @@
+
+name: CI
+
+on:
+  pull_request:
+    branches: [ master ]
+
+env:
+  NODE_VERSION: '12.14.0'
+
+jobs:
+  build-and-test:
+    name: Build and Test
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        ref: ${{ github.event.pull_request.head.ref }}
+        fetch-depth: 0
+    - run: |
+        git fetch --no-tags --prune --depth=5 origin master
+    - name: Use Node.js ${{ env.NODE_VERSION }}
+      uses: actions/setup-node@v1
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+    - name: npm install, build, and test
+      run: |
+        # Build and test the affected parts of the project
+        npm install
+        npm run lint
+        npm run affected:build -- --base=origin/master --head=HEAD --parallel --maxParallel=2
+        npm run affected:test -- --base=origin/master --head=HEAD --parallel --maxParallel=2
