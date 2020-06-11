@@ -1,0 +1,50 @@
+version: '3.3'
+services:
+  nginx:
+    depends_on:
+      - client
+      - backend
+    restart: always # because it is routing traffic to our entire app
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile
+    ports:
+      - '80:80'
+    container_name: todo-webserver
+
+  client:
+    build:
+      context: ./todo
+      dockerfile: Dockerfile
+    ports:
+     - '4200:4200'
+    volumes:
+      - /app/node_modules # Inside the container, don't try to override this folder, just leave as is
+    restart: on-failure
+    container_name: todo-client
+    
+  backend:
+    depends_on: 
+      - mongo
+    build:
+      context: ./todo-api
+      dockerfile: Dockerfile
+    ports:
+     - '3333:3333'
+    restart: on-failure
+    container_name: todo-backend
+    volumes:
+      - /app/node_modules # Inside the container, don't try to override this folder, just leave as is
+    # env_file:
+    #   - ./env/todo-app/backend.env
+      
+  mongo:
+    image: 'mongo'
+    container_name: 'todo-mongo'
+    ports:
+      - '27017-27019:27017-27019'
+    # volumes:
+    #   - ./docker/mongo/init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js:ro
+    #   - ./docker/mongo/mongo-volume:/data/db
+    # env_file:
+    #   - ./env/shareything-app/mongo.env

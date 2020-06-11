@@ -1,8 +1,8 @@
 {
   "extends": "../../tslint.json",
   "rules": {
-    "directive-selector": [true, "attribute", "breakableToy", "camelCase"],
-    "component-selector": [true, "element", "breakable-toy", "kebab-case"]
+    "directive-selector": [true, "attribute", "skBreakableToy", "camelCase"],
+    "component-selector": [true, "element", "skbt", "kebab-case"]
   },
   "linterOptions": {
     "exclude": ["!**/*"]

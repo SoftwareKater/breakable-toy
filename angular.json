@@ -59,7 +59,8 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "browserTarget": "todo:build"
+            "browserTarget": "todo:build",
+            "proxyConfig": "apps/todo/proxy.conf.json"
           },
           "configurations": {
             "production": {
@@ -118,6 +119,125 @@
             "tsConfig": ["apps/todo-e2e/tsconfig.e2e.json"],
             "exclude": ["**/node_modules/**", "!apps/todo-e2e/**"]
           }
+        }
+      }
+    },
+    "todo-api": {
+      "root": "apps/todo-api",
+      "sourceRoot": "apps/todo-api/src",
+      "projectType": "application",
+      "prefix": "todo-api",
+      "schematics": {},
+      "architect": {
+        "build": {
+          "builder": "@nrwl/node:build",
+          "options": {
+            "outputPath": "dist/apps/todo-api",
+            "main": "apps/todo-api/src/main.ts",
+            "tsConfig": "apps/todo-api/tsconfig.app.json",
+            "assets": ["apps/todo-api/src/assets"]
+          },
+          "configurations": {
+            "production": {
+              "optimization": true,
+              "extractLicenses": true,
+              "inspect": false,
+              "fileReplacements": [
+                {
+                  "replace": "apps/todo-api/src/environments/environment.ts",
+                  "with": "apps/todo-api/src/environments/environment.prod.ts"
+                }
+              ]
+            }
+          }
+        },
+        "serve": {
+          "builder": "@nrwl/node:execute",
+          "options": {
+            "buildTarget": "todo-api:build"
+          }
+        },
+        "lint": {
+          "builder": "@angular-devkit/build-angular:tslint",
+          "options": {
+            "tsConfig": [
+              "apps/todo-api/tsconfig.app.json",
+              "apps/todo-api/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**", "!apps/todo-api/**"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "apps/todo-api/jest.config.js",
+            "tsConfig": "apps/todo-api/tsconfig.spec.json",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "shared-data-access-mongo-storage": {
+      "root": "libs/shared/data-access/mongo-storage",
+      "sourceRoot": "libs/shared/data-access/mongo-storage/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@angular-devkit/build-angular:tslint",
+          "options": {
+            "tsConfig": [
+              "libs/shared/data-access/mongo-storage/tsconfig.lib.json",
+              "libs/shared/data-access/mongo-storage/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/shared/data-access/mongo-storage/**"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/shared/data-access/mongo-storage/jest.config.js",
+            "tsConfig": "libs/shared/data-access/mongo-storage/tsconfig.spec.json",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "todo-data-access-todo-api-client": {
+      "projectType": "library",
+      "root": "libs/todo/data-access/todo-api-client",
+      "sourceRoot": "libs/todo/data-access/todo-api-client/src",
+      "prefix": "breakable-toy",
+      "architect": {
+        "lint": {
+          "builder": "@angular-devkit/build-angular:tslint",
+          "options": {
+            "tsConfig": [
+              "libs/todo/data-access/todo-api-client/tsconfig.lib.json",
+              "libs/todo/data-access/todo-api-client/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/todo/data-access/todo-api-client/**"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/todo/data-access/todo-api-client/jest.config.js",
+            "tsConfig": "libs/todo/data-access/todo-api-client/tsconfig.spec.json",
+            "passWithNoTests": true,
+            "setupFile": "libs/todo/data-access/todo-api-client/src/test-setup.ts"
+          }
+        }
+      },
+      "schematics": {
+        "@nrwl/angular:component": {
+          "style": "scss"
         }
       }
     }

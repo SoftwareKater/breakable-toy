@@ -15,7 +15,14 @@
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
-    "paths": {}
+    "paths": {
+      "@breakable-toy/shared/data-access/mongo-storage": [
+        "libs/shared/data-access/mongo-storage/src/index.ts"
+      ],
+      "@breakable-toy/todo/data-access/todo-api-client": [
+        "libs/todo/data-access/todo-api-client/src/index.ts"
+      ]
+    }
   },
   "exclude": ["node_modules", "tmp"]
 }

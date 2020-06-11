@@ -20,11 +20,20 @@
   },
   "projects": {
     "todo": {
-      "tags": []
+      "tags": ["scope:todo"]
     },
     "todo-e2e": {
       "tags": [],
       "implicitDependencies": ["todo"]
+    },
+    "todo-api": {
+      "tags": ["scope:todo"]
+    },
+    "shared-data-access-mongo-storage": {
+      "tags": ["scope:shared", "type:data-access"]
+    },
+    "todo-data-access-todo-api-client": {
+      "tags": ["scope:todo", "type:data-access"]
     }
   }
 }
