@@ -4,7 +4,7 @@ import {
 } from '@breakable-toy/todo/data-access/todo-api-client';
 import { Todo } from '@breakable-toy/todo/data-access/todo-api-client';
 import { Injectable } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 
 const DUMMY_TODOS: Todo[] = [
   {
@@ -34,45 +34,56 @@ const DUMMY_TODOS: Todo[] = [
 export class TodoFacade {
 
   private _todos = new BehaviorSubject<Todo[]>([]);
-  private _todos$ = this._todos.asObservable();
-  public get todos() {
-    return this._todos$;
+  public todos$ = this._todos.asObservable();
+  public set todos(value: Todo[]) {
+    this._todos.next(value);
   }
 
   constructor(private readonly todoService: TodoService) {}
 
   public async init() {
-    await this.updateTodos();
+    await this.fetchAndUpdateTodos();
   }
 
   /** Delete all todos that are marked as done (have status === 'done') */
   public async deleteAllDone(): Promise<void> {
-    const delRes = await this.todoService.todoControllerDeleteByFilter('done').toPromise()
-    await this.updateTodos();
-  }
-
-  /** Returns all todos */
-  public getAllTodos() {
-    return this.todoService.todoControllerGetAll();
+    try {
+      const delRes = await this.todoService.todoControllerDeleteByFilter(Todo.StatusEnum.Done).toPromise()
+      await this.fetchAndUpdateTodos();
+    } catch (err) {
+      console.error(err);
+    }
   }
 
   /** Updates the status of a given todo to 'done' */
-  public tickOffTodo(todo: Todo): void {
+  public async tickOffTodo(todo: Todo): Promise<void> {
     const tickedOffTodo: Todo = {
       ...todo,
-      status: 'done',
+      status: Todo.StatusEnum.Done,
     };
-    this.todoService.todoControllerUpdate(todo.id, tickedOffTodo).subscribe(async (res) => {
-      await this.updateTodos();
-    });
+    try {
+      const updatedTodo = await this.updateTodo(tickedOffTodo).toPromise()
+      await this.fetchAndUpdateTodos();
+    } catch (err) {
+      console.error(err);
+    }
   }
 
-  public untickTodo(todo: Todo): void {
-    
+  public async untickTodo(todo: Todo): Promise<void> {
+    const tickedOffTodo: Todo = {
+      ...todo,
+      status: Todo.StatusEnum.Open,
+    };
+    try {
+      const updatedTodo = await this.updateTodo(tickedOffTodo).toPromise()
+      await this.fetchAndUpdateTodos();
+    } catch (err) {
+      console.error(err);
+    }
   }
 
   /** Creates a new todo */
-  public async createNewTodo(todo: CreateTodo = null) {
+  public async createNewTodo(todo: CreateTodo = null): Promise<void> {
     let created;
     if (todo !== null) {
       created = this.todoService.todoControllerCreate(todo);
@@ -82,12 +93,23 @@ export class TodoFacade {
       created = this.todoService.todoControllerCreate(DUMMY_TODOS[idx]);
     }
     created.subscribe(async (res) => {
-      await this.updateTodos();
-    });
+      await this.fetchAndUpdateTodos();
+    }).catch(err => console.error(err));
   }
 
-  private async updateTodos() {
+  /** Gets all todos and updates the behavior subject */
+  private async fetchAndUpdateTodos(): Promise<void> {
     const todos = await this.getAllTodos().toPromise(); 
-    this._todos.next(todos);
+    this.todos = todos;
+  }
+
+  /** Gets all todos */
+  private getAllTodos(): Observable<Todo[]> {
+    return this.todoService.todoControllerGetAll();
+  }
+
+  /** Puts a todo */
+  private updateTodo(todo: Todo): Observable<Todo> {
+    return this.todoService.todoControllerUpdate(todo.id, todo);
   }
 }

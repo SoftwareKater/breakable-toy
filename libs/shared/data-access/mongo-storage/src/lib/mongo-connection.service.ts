@@ -52,7 +52,7 @@ export class MongoConnection {
       Logger.log('Successfully created connection to mongo db!');
     } catch {
       this._client = null;
-      Logger.error('Could not establish a connection to mongo db.');
+      Logger.error(`Could not establish a connection to mongo db using the connection string: ${connectionString}`);
     }
   }
 }

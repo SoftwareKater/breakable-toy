@@ -15,27 +15,25 @@ export class TodoComponent implements OnInit {
 
   public ngOnInit(): void {
     this.todoFacade.init();
-    this.todoFacade.todos.subscribe((t) => {
+    this.todoFacade.todos$.subscribe((t) => {
       this.todos = t;
     });
   }
 
-  public changeStatus(todo: Todo): void {
+  public async changeStatus(todo: Todo): Promise<void> {
     const changeTodo = this.todos.find(t => t.id === todo.id);
-    if (changeTodo.status === 'done') {
-      changeTodo.status = 'open';
-      this.todoFacade.untickTodo(todo)
+    if (changeTodo.status === Todo.StatusEnum.Done) {
+      changeTodo.status = Todo.StatusEnum.Open;
+      await this.todoFacade.untickTodo(todo);
     } else {
-      changeTodo.status = 'done'
-      this.todoFacade.tickOffTodo(todo)
+      changeTodo.status = Todo.StatusEnum.Done;
+      await this.todoFacade.tickOffTodo(todo);
     }
   }
 
   public async deleteAllDone(): Promise<void> {
     await this.todoFacade.deleteAllDone();
   }
-
-  public setDone(todo: Todo) {}
 
   public addTodo() {
     this.todoFacade.createNewTodo();
