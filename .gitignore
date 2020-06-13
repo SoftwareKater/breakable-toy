@@ -5,12 +5,12 @@
 /docker/todo-app/mongo
 /docker/todo-app/nginx/configs
 /docker/todo-app/todo/src
-
+/docker/todo-app/env
 # environment varibles
 /env
 
 # generated output
-/tools/schematics/todo.openapi.json
+# /tools/schematics/todo.openapi.json
 /libs/todo/data-access/todo-api-client/src/lib
 
 # compiled output
