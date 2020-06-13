@@ -30,12 +30,16 @@ const DUMMY_TODOS: Todo[] = [
   },
 ];
 
+/**
+ * Facade between the TodoComponent and the TodoAPI Backend. The database serves as the
+ * single source of truth, i.e. there is no STATE here. After creation and deletion of
+ * a todo the facade will automatically refetch all todos.
+ */
 @Injectable()
 export class TodoFacade {
-
   private _todos = new BehaviorSubject<Todo[]>([]);
   public todos$ = this._todos.asObservable();
-  public set todos(value: Todo[]) {
+  private set todos(value: Todo[]) {
     this._todos.next(value);
   }
 
@@ -48,7 +52,9 @@ export class TodoFacade {
   /** Delete all todos that are marked as done (have status === 'done') */
   public async deleteAllDone(): Promise<void> {
     try {
-      const delRes = await this.todoService.todoControllerDeleteByFilter(Todo.StatusEnum.Done).toPromise()
+      const delRes = await this.todoService
+        .todoControllerDeleteByFilter(Todo.StatusEnum.Done)
+        .toPromise();
       await this.fetchAndUpdateTodos();
     } catch (err) {
       console.error(err);
@@ -62,8 +68,7 @@ export class TodoFacade {
       status: Todo.StatusEnum.Done,
     };
     try {
-      const updatedTodo = await this.updateTodo(tickedOffTodo).toPromise()
-      await this.fetchAndUpdateTodos();
+      const updatedTodo = await this.updateTodo(tickedOffTodo).toPromise();
     } catch (err) {
       console.error(err);
     }
@@ -75,8 +80,7 @@ export class TodoFacade {
       status: Todo.StatusEnum.Open,
     };
     try {
-      const updatedTodo = await this.updateTodo(tickedOffTodo).toPromise()
-      await this.fetchAndUpdateTodos();
+      const updatedTodo = await this.updateTodo(tickedOffTodo).toPromise();
     } catch (err) {
       console.error(err);
     }
@@ -84,7 +88,7 @@ export class TodoFacade {
 
   /** Creates a new todo */
   public async createNewTodo(todo: CreateTodo = null): Promise<void> {
-    let created;
+    let created: Observable<Todo>;
     if (todo !== null) {
       created = this.todoService.todoControllerCreate(todo);
     } else {
@@ -92,14 +96,17 @@ export class TodoFacade {
       const idx = randomIndex === 3 ? 2 : randomIndex;
       created = this.todoService.todoControllerCreate(DUMMY_TODOS[idx]);
     }
-    created.subscribe(async (res) => {
+    try {
+      const res = await created.toPromise();
       await this.fetchAndUpdateTodos();
-    }).catch(err => console.error(err));
+    } catch (err) {
+      console.error(err);
+    }
   }
 
   /** Gets all todos and updates the behavior subject */
   private async fetchAndUpdateTodos(): Promise<void> {
-    const todos = await this.getAllTodos().toPromise(); 
+    const todos = await this.getAllTodos().toPromise();
     this.todos = todos;
   }
 

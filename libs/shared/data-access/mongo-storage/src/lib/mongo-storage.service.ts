@@ -130,7 +130,7 @@ export class MongoStorageService<T extends MongoResource> {
     });
   }
 
-  public async update(filter: FilterQuery<T>, updateEntity: any) {
+  public async update(filter: FilterQuery<T>, updateEntity: any): Promise<T> {
     return new Promise((resolve, reject) => {
       this.collection.findOneAndReplace(
         filter,

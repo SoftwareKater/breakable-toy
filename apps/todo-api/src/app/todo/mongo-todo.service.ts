@@ -6,9 +6,11 @@ import { Todo } from './resources/todo.dto';
 import { CreateTodo } from './resources/create-todo';
 import { TodoPriority } from './resources/todo-priority.enum';
 import { TodoStatus } from './resources/todo-status.enum';
+import { UpdateTodo } from './resources/update-todo';
+import { FilterQuery } from 'mongodb';
 
 @Injectable()
-export class TodoService {
+export class MongoTodoService {
   constructor(
     private filterFactory: MongoFilterFactory<Todo>,
     private storageService: MongoStorageService<Todo>
@@ -46,13 +48,16 @@ export class TodoService {
     return this.storageService.getOne(filter);
   }
 
-  public async update(todo: Todo): Promise<Todo> {
-    // const existingTodo = await this.getById(todo.id);
-    // const updatedTodo: Todo = {
-    //   ...existingTodo,
-    // };
-    // const filter: FilterQuery<Todo> = this.filterFactory.forgeIdFilter(todo.id);
-    // return this.storageService.update(filter, updatedTodo);
-    return null;
+  public async update(id: string, todo: UpdateTodo): Promise<Todo> {
+    const existingTodo: Todo = await this.getById(id);
+    const updatedTodo: Todo = {
+      ...existingTodo,
+      description: todo.description ?? existingTodo.description,
+      priority: todo.priority ?? existingTodo.priority,
+      status: todo.status ?? existingTodo.status,
+      value: todo.value ?? existingTodo.value,
+    };
+    const filter: FilterQuery<Todo> = this.filterFactory.forgeIdFilter(id);
+    return this.storageService.update(filter, updatedTodo);
   }
 }

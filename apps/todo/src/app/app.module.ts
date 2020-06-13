@@ -4,22 +4,28 @@ import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { AppComponent } from './app.component';
 import { RouterModule } from '@angular/router';
 import { TodoModule } from './todo/todo.module';
-import { ConfigurationParameters, ApiModule, Configuration } from '@breakable-toy/todo/data-access/todo-api-client';
+import {
+  ConfigurationParameters,
+  ApiModule,
+  Configuration,
+} from '@breakable-toy/todo/data-access/todo-api-client';
 import { HttpClientModule } from '@angular/common/http';
 // import { AppRoutingModule } from './app-routing.module';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 const apiConfigFactory = (): Configuration => {
   const params: ConfigurationParameters = {
     // set configuration parameters here.
-    basePath: `//${location.host}`// environment.apiBasePath + ':' + environment.apiPort,
-  }
+    basePath: `//${location.host}`, // environment.apiBasePath + ':' + environment.apiPort,
+  };
   return new Configuration(params);
-}
+};
 
 @NgModule({
   declarations: [AppComponent],
   imports: [
     // AppRoutingModule,
+    BrowserAnimationsModule,
     HttpClientModule,
     ApiModule.forRoot(apiConfigFactory),
     TodoModule,

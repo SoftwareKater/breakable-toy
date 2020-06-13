@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { Todo } from '@breakable-toy/todo/data-access/todo-api-client';
+import { Todo, CreateTodo } from '@breakable-toy/todo/data-access/todo-api-client';
 import { TodoFacade } from './todo.facade';
+import { MatDialogConfig, MatDialog } from '@angular/material/dialog';
+import { CreateTodoDialogComponent } from './create-todo/create-todo-dialog.component';
 
 @Component({
   selector: 'skbt-todo',
@@ -8,10 +10,13 @@ import { TodoFacade } from './todo.facade';
   styleUrls: ['./todo.component.scss'],
 })
 export class TodoComponent implements OnInit {
-  displayedColumns: string[] = ['value', /*'priority',*/ 'done'];
+  displayedColumns: string[] = ['value', 'priority', 'done'];
   todos: Todo[];
 
-  constructor(private readonly todoFacade: TodoFacade) {}
+  constructor(
+    private readonly todoFacade: TodoFacade,
+    private readonly dialog: MatDialog
+  ) {}
 
   public ngOnInit(): void {
     this.todoFacade.init();
@@ -21,7 +26,7 @@ export class TodoComponent implements OnInit {
   }
 
   public async changeStatus(todo: Todo): Promise<void> {
-    const changeTodo = this.todos.find(t => t.id === todo.id);
+    const changeTodo = this.todos.find((t) => t.id === todo.id);
     if (changeTodo.status === Todo.StatusEnum.Done) {
       changeTodo.status = Todo.StatusEnum.Open;
       await this.todoFacade.untickTodo(todo);
@@ -35,7 +40,27 @@ export class TodoComponent implements OnInit {
     await this.todoFacade.deleteAllDone();
   }
 
-  public addTodo() {
-    this.todoFacade.createNewTodo();
+  public addTodo(todo: CreateTodo): void {
+    this.todoFacade.createNewTodo(todo);
+  }
+
+  public openDialog(): void {
+    const dialogConfig = new MatDialogConfig();
+    dialogConfig.disableClose = true;
+    dialogConfig.autoFocus = true;
+    dialogConfig.width = '350px';
+
+    const resumeGameDialogRef = this.dialog.open(
+      CreateTodoDialogComponent,
+      dialogConfig
+    );
+
+    resumeGameDialogRef.afterClosed().subscribe((result: CreateTodo) => {
+      if (result === null) {
+        return;
+      } else {
+        this.addTodo(result);
+      }
+    });
   }
 }
