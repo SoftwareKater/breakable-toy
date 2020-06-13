@@ -7,16 +7,25 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatButtonModule } from '@angular/material/button';
 import { TodoFacade } from './todo.facade';
+import { MatDialogModule } from '@angular/material/dialog';
+import { ReactiveFormsModule } from '@angular/forms';
+import { CreateTodoDialogComponent } from './create-todo/create-todo-dialog.component';
+import { MatInputModule } from '@angular/material/input';
+import { MatFormFieldModule } from '@angular/material/form-field';
 
 @NgModule({
-  declarations: [TodoComponent],
+  declarations: [TodoComponent, CreateTodoDialogComponent],
   imports: [
     CommonModule,
     MatButtonModule,
     MatCheckboxModule,
+    MatDialogModule,
+    MatFormFieldModule,
     MatTableModule,
     MatIconModule,
+    MatInputModule,
     MatToolbarModule,
+    ReactiveFormsModule,
   ],
   exports: [TodoComponent],
   providers: [TodoFacade],

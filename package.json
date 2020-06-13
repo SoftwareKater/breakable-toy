@@ -28,9 +28,9 @@
     "postinstall": "ngcc --properties es2015 browser module main --first-only --create-ivy-entry-points",
     "todo-app": "start nx serve todo && start nx serve todo-api",
     "todo:g:openapi": "nx serve api && wget http://localhost:3333/api-json && paste body to tools/schematics/openapi.json",
-    "todo:g:client": "openapi-generator generate -i tools/schematics/todo.openapi.json -g typescript-angular -o libs/todo/data-access/todo-api-client/src/lib",
+    "todo:g:api-client": "openapi-generator generate -i tools/schematics/todo.openapi.json -g typescript-angular -o libs/todo/data-access/todo-api-client/src/lib",
     "todo:cp:frontend": "cp -r ./apps/todo/* ./docker/todo-app/todo/src/apps/todo && cp -r angular.json package*.json tsconfig.json ./docker/todo-app/todo/src && cp -r ./libs/todo/data-access/todo-api-client/* ./docker/todo-app/todo/src/libs/todo/data-access/todo-api-client",
-    "todo:cp:backend": "cp -r ./apps/todo-api/* ./docker/todo-app/todo-api/src/apps/todo-api && cp -r ./libs/mongo-storage/*  ./docker/todo-app/todo-api/src/libs/mongo-storage && cp -r angular.json nx.json package*.json tsconfig.json ./docker/todo-app/todo-api/src",
+    "todo:cp:backend": "cp -r ./apps/todo-api/* ./docker/todo-app/todo-api/src/apps/todo-api && cp -r ./libs/shared/data-access/mongo-storage/*  ./docker/todo-app/todo-api/src/libs/shared/data-access/mongo-storage && cp -r angular.json nx.json package*.json tsconfig.json ./docker/todo-app/todo-api/src",
     "todo:docker:prod": "npm run todo:cp:frontend && npm run todo:cp:backend && cd docker/todo-app && docker-compose up --build"
   },
   "private": true,
