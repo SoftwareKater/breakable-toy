@@ -8,7 +8,7 @@ import {
   Delete,
   Query,
 } from '@nestjs/common';
-import { TodoService } from './todo.service';
+import { MongoTodoService } from './mongo-todo.service';
 import {
   ApiTags,
   ApiOkResponse,
@@ -19,16 +19,26 @@ import {
 import { Todo } from './resources/todo.dto';
 import { CreateTodo } from './resources/create-todo';
 import { TodoStatus } from './resources/todo-status.enum';
+import { UpdateTodo } from './resources/update-todo';
 
 @ApiTags('todo')
 @Controller('todo')
 export class TodoController {
-  constructor(private readonly todoService: TodoService) {}
+  constructor(private readonly todoService: MongoTodoService) {}
 
   @Post('')
   @ApiCreatedResponse({ type: Todo, description: 'Successfully created the todo' })
   public async create(@Body() todo: CreateTodo): Promise<Todo> {
     return await this.todoService.create(todo);
+  }
+
+  @Delete('')
+  @ApiQuery({ name: 'status', enum: TodoStatus, example: TodoStatus.Done })
+  @ApiOkResponse({ type: Boolean })
+  public async deleteByFilter(
+    @Query('status') status: TodoStatus
+  ): Promise<boolean> {
+    return await this.todoService.deleteByStatus(status);
   }
 
   @Get('')
@@ -47,17 +57,8 @@ export class TodoController {
   @ApiOkResponse({ type: Todo })
   public async update(
     @Param('id') id: string,
-    @Body() todo: Todo
+    @Body() todo: UpdateTodo
   ): Promise<Todo> {
-    return await this.todoService.update(todo);
-  }
-
-  @Delete('')
-  @ApiQuery({ name: 'status', enum: TodoStatus, example: TodoStatus.Done })
-  @ApiOkResponse({ type: Boolean })
-  public async deleteByFilter(
-    @Query('status') status: TodoStatus
-  ): Promise<boolean> {
-    return await this.todoService.deleteByStatus(status);
+    return await this.todoService.update(id, todo);
   }
 }

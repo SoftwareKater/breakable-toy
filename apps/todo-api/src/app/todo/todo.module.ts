@@ -1,11 +1,11 @@
 import { Module } from '@nestjs/common';
 import { MongoStorageModule } from '@breakable-toy/shared/data-access/mongo-storage';
 import { TodoController } from './todo.controller';
-import { TodoService } from './todo.service';
+import { MongoTodoService } from './mongo-todo.service';
 
 @Module({
   imports: [MongoStorageModule],
   controllers: [TodoController],
-  providers: [TodoService],
+  providers: [MongoTodoService],
 })
 export class TodoModule {}

@@ -1,8 +1,8 @@
 version: '3.3'
 services:
-  nginx:
+  webserver:
     depends_on:
-      - client
+      - frontend
       - backend
     restart: always # because it is routing traffic to our entire app
     build:
@@ -12,7 +12,7 @@ services:
       - '80:80'
     container_name: todo-webserver
 
-  client:
+  frontend:
     build:
       context: ./todo
       dockerfile: Dockerfile
@@ -21,11 +21,11 @@ services:
     volumes:
       - /app/node_modules # Inside the container, don't try to override this folder, just leave as is
     restart: on-failure
-    container_name: todo-client
+    container_name: todo-frontend
     
   backend:
     depends_on: 
-      - mongo
+      - db
     build:
       context: ./todo-api
       dockerfile: Dockerfile
@@ -35,12 +35,12 @@ services:
     container_name: todo-backend
     volumes:
       - /app/node_modules # Inside the container, don't try to override this folder, just leave as is
-    # env_file:
-    #   - ./env/todo-app/backend.env
+    env_file:
+      - ./env/backend.env
       
-  mongo:
+  db:
     image: 'mongo'
-    container_name: 'todo-mongo'
+    container_name: 'todo-db'
     ports:
       - '27017-27019:27017-27019'
     # volumes:

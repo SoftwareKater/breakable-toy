@@ -11,7 +11,7 @@ import { FilterQuery } from 'mongodb';
 import { MongoStorageServiceProviderName } from '@breakable-toy/shared/data-access/mongo-storage';
 
 @Injectable()
-export class TodoService {
+export class MongoTodoService {
   constructor(
     private readonly filterFactory: MongoFilterFactory<Todo>,
     @Inject(MongoStorageServiceProviderName)
@@ -50,13 +50,16 @@ export class TodoService {
     return this.storageService.getOne(filter);
   }
 
-  public async update(todo: Todo): Promise<Todo> {
-    // const existingTodo = await this.getById(todo.id);
-    // const updatedTodo: Todo = {
-    //   ...existingTodo,
-    // };
-    // const filter: FilterQuery<Todo> = this.filterFactory.forgeIdFilter(todo.id);
-    // return this.storageService.update(filter, updatedTodo);
-    return null;
+  public async update(id: string, todo: UpdateTodo): Promise<Todo> {
+    const existingTodo: Todo = await this.getById(id);
+    const updatedTodo: Todo = {
+      ...existingTodo,
+      description: todo.description ?? existingTodo.description,
+      priority: todo.priority ?? existingTodo.priority,
+      status: todo.status ?? existingTodo.status,
+      value: todo.value ?? existingTodo.value,
+    };
+    const filter: FilterQuery<Todo> = this.filterFactory.forgeIdFilter(id);
+    return this.storageService.update(filter, updatedTodo);
   }
 }
