@@ -37,7 +37,6 @@ export class MongoConnection {
     const connectionString = this.getConnectionStringFromOptionsOrEnv(options);
     const dbName = this.getDbNameFromOptionsOrEnc(options);
     Logger.log('Connecting to mongo db...');
-    // console.log('<connection string>/<db name> : ', '' + connectionString + '/' + dbName);
     this._dbName = dbName;
     try {
       this._client = await this.connect(connectionString);
