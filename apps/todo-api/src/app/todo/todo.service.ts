@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Inject } from '@nestjs/common';
 import { MongoStorageService } from '@breakable-toy/shared/data-access/mongo-storage';
 import { v4 as uuid } from 'uuid';
 import { MongoFilterFactory } from '@breakable-toy/shared/data-access/mongo-storage';
@@ -6,11 +6,15 @@ import { Todo } from './resources/todo.dto';
 import { CreateTodo } from './resources/create-todo';
 import { TodoPriority } from './resources/todo-priority.enum';
 import { TodoStatus } from './resources/todo-status.enum';
+import { UpdateTodo } from './resources/update-todo';
+import { FilterQuery } from 'mongodb';
+import { MongoStorageServiceProviderName } from '@breakable-toy/shared/data-access/mongo-storage';
 
 @Injectable()
 export class TodoService {
   constructor(
-    private filterFactory: MongoFilterFactory<Todo>,
+    private readonly filterFactory: MongoFilterFactory<Todo>,
+    @Inject(MongoStorageServiceProviderName)
     private storageService: MongoStorageService<Todo>
   ) {
     storageService.init('todo');
