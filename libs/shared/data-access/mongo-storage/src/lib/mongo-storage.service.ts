@@ -1,11 +1,17 @@
-import { Injectable, Logger, NotImplementedException } from '@nestjs/common';
-import { MongoConnection } from './mongo-connection.service';
+import {
+  Injectable,
+  Logger,
+  NotImplementedException,
+  Inject,
+} from '@nestjs/common';
 import {
   Collection,
   FilterQuery,
   FindAndModifyWriteOpResultObject,
 } from 'mongodb';
 import { MongoResource } from './resources/mongo-resource.entity';
+import { MongoDbConnectionProviderName } from './constants';
+import { MongoConnection } from './mongo-connection.service';
 
 @Injectable()
 export class MongoStorageService<T extends MongoResource> {
@@ -14,7 +20,10 @@ export class MongoStorageService<T extends MongoResource> {
     return this.mongoConnection.getCollection(this.collectionName);
   }
 
-  constructor(private readonly mongoConnection: MongoConnection) {}
+  constructor(
+    @Inject(MongoDbConnectionProviderName)
+    private readonly mongoConnection: MongoConnection
+  ) {}
 
   public init(collectionName: string) {
     this.collectionName = collectionName;
@@ -34,7 +43,7 @@ export class MongoStorageService<T extends MongoResource> {
       });
     });
   }
-  
+
   public async deleteMany(filter: FilterQuery<T>): Promise<number> {
     return new Promise((resolve, reject) => {
       this.collection.deleteMany(filter, (err, res) => {
@@ -123,7 +132,6 @@ export class MongoStorageService<T extends MongoResource> {
           Logger.error(`FindOne failed with code ${err.code}: ${err.message}`);
           reject(err);
         } else {
-          Logger.verbose(`FindOne found obejct ${res}`);
           resolve(res);
         }
       });

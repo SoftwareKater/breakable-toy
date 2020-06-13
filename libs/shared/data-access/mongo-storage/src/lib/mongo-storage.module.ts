@@ -1,11 +1,11 @@
 import { Module } from '@nestjs/common';
 import { MongoFilterFactory } from './mongo-filter.factory';
-import { MongoConnection } from './mongo-connection.service';
-import { MongoStorageService } from './mongo-storage.service';
+import { mongoConnectionProvider } from './providers/database.providers';
+import { mongoStorageServiceProvider } from './providers/service.providers';
 
 @Module({
   controllers: [],
-  providers: [MongoConnection, MongoFilterFactory, MongoStorageService],
-  exports: [MongoConnection, MongoFilterFactory, MongoStorageService],
+  providers: [MongoFilterFactory, mongoStorageServiceProvider, mongoConnectionProvider],
+  exports: [MongoFilterFactory, mongoStorageServiceProvider],
 })
 export class MongoStorageModule {}
