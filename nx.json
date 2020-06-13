@@ -34,6 +34,10 @@
     },
     "todo-data-access-todo-api-client": {
       "tags": ["scope:todo", "type:data-access"]
+    },
+    "auth": {
+      "tags": []
+    },
     }
   }
 }
