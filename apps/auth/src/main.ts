@@ -1,36 +1,30 @@
-/**
- * This is not a production server yet!
- * This is only a minimal backend to get started.
- */
-
 import { Logger } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
+import { ConfigService } from '@nestjs/config';
+import { Transport } from '@nestjs/microservices';
 
 import { AppModule } from './app/app.module';
 
-import { Transport } from '@nestjs/microservices';
-
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-
+  
+  const configService = app.get<ConfigService>(ConfigService);
+  // console.log(configService)
+  const messagingPort = configService.get('authService.messagePort');
   app.connectMicroservice({
     transport: Transport.TCP,
     options: {
       host: 'localhost',
-      port: 4010,
+      port: messagingPort,
     },
   });
-
-  // const globalPrefix = 'api';
-  // app.setGlobalPrefix(globalPrefix);
-  // const port = process.env.PORT || 3333;
-  // await app.listen(port, () => {
-  //   Logger.log('Listening at http://localhost:' + port + '/' + globalPrefix);
-  // });
-
   await app.startAllMicroservicesAsync();
-  await app.listen(3001);
-  Logger.log('Auth microservice running');
+
+  const port = configService.get('authService.apiPort');
+  await app.listen(port, () => {
+    Logger.log('Auth service listening at http://localhost:' + port);
+    Logger.log('Auth service accepts messages at http://localhost:' + messagingPort)
+  });
 }
 
 bootstrap();
