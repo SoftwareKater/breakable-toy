@@ -1,42 +1,38 @@
-import { Module, Logger } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { UserManagementMicroserviceName, JwtSecret } from '../constants';
-import {
-  Transport,
-  ClientProxyFactory,
-} from '@nestjs/microservices';
 import { JwtModule } from '@nestjs/jwt';
 import { LocalStrategy } from './strategies/local.strategy';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { AuthController } from './auth.controller';
 import { ConfigService } from '@nestjs/config';
+import { MongoStorageModule } from '@breakable-toy/shared/data-access/mongo-storage';
+import { MongoAuthSubjectService } from './mongo-auth-subject.service';
+import { PassportModule } from '@nestjs/passport';
 
 @Module({
   imports: [
-    JwtModule.register({
-      secret: JwtSecret, // naha, this should be env var
-      signOptions: { expiresIn: '60s' },
+    MongoStorageModule,
+    PassportModule,
+    JwtModule.registerAsync({
+      useFactory: (configService: ConfigService) => {
+        const jwtSecret = configService.get('authService.jwtSecret');
+        const jwtExpiration = configService.get('authService.jwtExpirationTimeInSec')
+        return {
+          secret: jwtSecret,
+          signOptions: { expiresIn: jwtExpiration + 's' },
+        };
+      },
+      inject: [ConfigService],
     }),
   ],
   controllers: [AuthController],
   providers: [
     AuthService,
+    ConfigService,
     LocalStrategy,
+    MongoAuthSubjectService,
     JwtStrategy,
-    {
-      provide: UserManagementMicroserviceName,
-      useFactory: (configService: ConfigService) => {
-        const port = configService.get('userService.messagePort');
-        Logger.log('Communicating with User Management Hybridservice via messages to http://localhost:' + port);
-        return ClientProxyFactory.create({
-          transport: Transport.TCP,
-          options: {
-            port,
-          },
-        });
-      },
-      inject: [ConfigService],
-    },
   ],
+  exports: [ConfigService],
 })
 export class AuthModule {}
