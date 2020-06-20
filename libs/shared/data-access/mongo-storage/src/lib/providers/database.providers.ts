@@ -1,19 +1,16 @@
-import { MongoDbConnectionProviderName } from '../constants';
-import { createMongoConnection } from '../mongo-connection.service';
+import {
+  MongoConnectionProviderName,
+  MongoConnectionOptionsProviderName,
+} from '../constants';
+import { MongoConnection } from '../mongo-connection.service';
+import { MongoConnectionOptions } from '../resources/mongo-connection-options.entity';
 
 export const mongoConnectionProvider = {
-  provide: MongoDbConnectionProviderName,
-  useFactory: async () => {
-    let port: number;
-    if (process.env.MONGO_DB_PORT !== null) {
-      port = parseInt(process.env.MONGO_DB_PORT, 10);
-    }
-    return await createMongoConnection({
-      host: process.env.MONGO_DB_HOST || 'localhost',
-      port: port || 27017,
-      username: 'root',
-      password: 'root',
-      database: process.env.MONGO_DB_NAME || 'default',
-    });
+  provide: MongoConnectionProviderName,
+  useFactory: async (options: MongoConnectionOptions) => {
+    const connection = new MongoConnection();
+    await connection.init(options);
+    return connection;
   },
+  inject: [MongoConnectionOptionsProviderName],
 };

@@ -11,12 +11,18 @@ import { PassportModule } from '@nestjs/passport';
 
 @Module({
   imports: [
-    MongoStorageModule,
+    MongoStorageModule.register({
+      database: 'auth',
+      host: 'localhost',
+      port: 27017,
+    }),
     PassportModule,
     JwtModule.registerAsync({
       useFactory: (configService: ConfigService) => {
         const jwtSecret = configService.get('authService.jwtSecret');
-        const jwtExpiration = configService.get('authService.jwtExpirationTimeInSec')
+        const jwtExpiration = configService.get(
+          'authService.jwtExpirationTimeInSec'
+        );
         return {
           secret: jwtSecret,
           signOptions: { expiresIn: jwtExpiration + 's' },
