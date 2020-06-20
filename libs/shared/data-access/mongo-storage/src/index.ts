@@ -5,3 +5,5 @@ export * from './lib/mongo-storage.module';
 export * from './lib/mongo-filter.factory';
 export * from './lib/mongo-storage.service';
 export * from './lib/providers/service.providers';
+// resources
+export * from './lib/resources';
