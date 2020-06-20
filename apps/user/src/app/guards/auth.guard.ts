@@ -10,6 +10,7 @@ export class AuthGuard implements CanActivate {
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
+    Logger.verbose('Sending a message to the auth microservice to validate the access token');
     const req = context.switchToHttp().getRequest();
     return new Promise(async (resolve, reject) => {
       try {
@@ -20,10 +21,13 @@ export class AuthGuard implements CanActivate {
           )
           .pipe(timeout(5000))
           .toPromise/*<boolean>*/();
-
-        resolve(true);
+        if (res) {
+          resolve(true);
+        } else {
+          resolve(false);
+        }
       } catch (err) {
-        Logger.error(err);
+        Logger.error(`Authorization failed with error: ${err}`);
         resolve(false);
       }
     });

@@ -40,6 +40,9 @@
     },
     "user": {
       "tags": []
+    },
+    "shared-data-access-auth-api-client": {
+      "tags": []
     }
   }
 }

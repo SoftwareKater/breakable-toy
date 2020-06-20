@@ -9,13 +9,14 @@ import {
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LocalAuthGuard } from './guards/local-auth.guard';
-import { MessagePattern } from '@nestjs/microservices';
+import { MessagePattern, Payload, Ctx, RmqContext } from '@nestjs/microservices';
 import {
   ApiOkResponse,
   ApiTags,
   ApiBody,
   ApiParam,
   ApiCreatedResponse,
+  ApiOAuth2,
 } from '@nestjs/swagger';
 import { AuthSubject } from './resources/auth-subject.dto';
 import { Credentials } from './resources/credentials.dto';
@@ -52,7 +53,7 @@ export class AuthController {
 
   @Post('')
   @ApiBody({ type: CreateAuthSubject, required: true })
-  @ApiCreatedResponse({ type: AuthSubject })
+  @ApiCreatedResponse({ type: PublicAuthSubject, description: 'Successfully created new auth subject.' })
   public async createAuthSubject(
     @Body() subject: CreateAuthSubject
   ): Promise<PublicAuthSubject> {
@@ -89,6 +90,7 @@ export class AuthController {
   }
 
   @UseGuards(JwtAuthGuard)
+  @ApiOAuth2([])
   @Get('')
   public async test(): Promise<string> {
     return 'You have a valid jwt access token';

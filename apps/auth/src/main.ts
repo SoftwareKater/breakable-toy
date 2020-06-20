@@ -26,6 +26,7 @@ async function bootstrap() {
 
   // Swagger
   const options = new DocumentBuilder()
+    .addOAuth2({ type: 'oauth2', flows: { implicit: { scopes: {}, authorizationUrl: 'http://localhost:3000/api/auth' } } })
     .setTitle('Auth Microservice')
     .setDescription('Authenticate users via api calls and messages.')
     .setVersion('1.0')
@@ -37,8 +38,12 @@ async function bootstrap() {
   // Start Service
   const port = configService.get('authService.apiPort');
   await app.listen(port, () => {
-    Logger.log('Auth service listening at http://localhost:' + port + '/' + globalPrefix);
-    Logger.log('Auth service accepts messages at http://localhost:' + messagingPort)
+    Logger.log(
+      'Auth service listening at http://localhost:' + port + '/' + globalPrefix
+    );
+    Logger.log(
+      'Auth service accepts messages at http://localhost:' + messagingPort
+    );
   });
 }
 
