@@ -15,7 +15,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   }
 
   public async validate(payload) {
-    Logger.verbose('[JwtStrategy] Validating access token...');
+    Logger.verbose('Validating access token...', 'JwtStrategy' );
     return { id: payload.sub, user: payload.user };
   }
 }

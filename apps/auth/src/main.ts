@@ -1,7 +1,7 @@
 import { Logger } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { ConfigService } from '@nestjs/config';
-import { Transport } from '@nestjs/microservices';
+import { Transport, MicroserviceOptions } from '@nestjs/microservices';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 import { AppModule } from './app/app.module';
@@ -10,23 +10,57 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const globalPrefix = 'api';
   app.setGlobalPrefix(globalPrefix);
-  
+
   const configService = app.get<ConfigService>(ConfigService);
-  
-  // Microservice setup
-  const messagingPort = configService.get('authService.messagePort');
+
+  // Setup TCP messaging
+  const tcpMessagingHost = configService.get('authService.tcp.host');
+  const tcpMessagingPort = configService.get('authService.tcp.port');
   app.connectMicroservice({
     transport: Transport.TCP,
     options: {
-      host: 'localhost',
-      port: messagingPort,
+      host: tcpMessagingHost,
+      port: tcpMessagingPort,
     },
   });
+  Logger.log(
+    `Accepting messages at http://${tcpMessagingHost}:` + tcpMessagingPort,
+    'AUTH_SERVICE'
+  );
+
+  // Connect to message broker
+  const url = configService.get<string>('authService.rmq.url');
+  const queues = configService.get<string>('authService.rmq.queues').split(',');
+  for (const queue of queues) {
+    app.connectMicroservice<MicroserviceOptions>({
+      transport: Transport.RMQ,
+      options: {
+        urls: [url],
+        queue: queue,
+        queueOptions: {
+          durable: false,
+        },
+      },
+    });
+    Logger.log(`Listening to messages in the ${queue} queue`, 'AUTH_SERVICE');
+  }
+
+  // Start all microservices connections
   await app.startAllMicroservicesAsync();
 
   // Swagger
+  const host = configService.get('authService.api.host');
+  const port = configService.get('authService.api.port');
   const options = new DocumentBuilder()
-    .addOAuth2({ type: 'oauth2', flows: { implicit: { scopes: {}, authorizationUrl: 'http://localhost:3000/api/auth' } } })
+    .addOAuth2({
+      type: 'oauth2',
+      flows: {
+        implicit: {
+          scopes: {},
+          authorizationUrl: `http://${host}:${port}/${globalPrefix}/auth`,
+        },
+      },
+    })
     .setTitle('Auth Microservice')
     .setDescription('Authenticate users via api calls and messages.')
     .setVersion('1.0')
@@ -36,13 +70,10 @@ async function bootstrap() {
   SwaggerModule.setup(globalPrefix, app, document);
 
   // Start Service
-  const port = configService.get('authService.apiPort');
   await app.listen(port, () => {
     Logger.log(
-      'Auth service listening at http://localhost:' + port + '/' + globalPrefix
-    );
-    Logger.log(
-      'Auth service accepts messages at http://localhost:' + messagingPort
+      `Listening to api calls at http://${host}:${port}/${globalPrefix}`,
+      'AUTH_SERVICE'
     );
   });
 }

@@ -15,21 +15,21 @@ export class JwtAuthGuard implements CanActivate {
 
   /** maybe i should move this to jwt strategy, like with local auth */
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    Logger.verbose('[JwtAuthGuard] Validating access token...');
+    Logger.verbose('Validating access token...', 'JwtAuthGuard');
     const req = context.switchToHttp().getRequest();
     const accessToken = req.headers['authorization']?.split(' ')[1];
     return new Promise(async (resolve, reject) => {
       try {
         const res = await this.authService.validateToken(accessToken);
         if (res !== null && res !== false) {
-          Logger.verbose('[JwtAuthGuard] Token is valid');
+          Logger.verbose('Token is valid', 'JwtAuthGuard');
           resolve(true);
         } else {
-          Logger.verbose('[JwtAuthGuard] Token is not valid');
+          Logger.verbose('Token is not valid', 'JwtAuthGuard');
           resolve(false);
         }
       } catch (err) {
-        Logger.verbose(`[JwtAuthGuard] Token is not valid. Reason: ${err.message}`);      
+        Logger.verbose(`Token is not valid. Reason: ${err.message}`, 'JwtAuthGuard');
         resolve(false);
       }
     });

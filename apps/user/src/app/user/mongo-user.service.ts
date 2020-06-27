@@ -5,7 +5,6 @@ import { MongoFilterFactory } from '@breakable-toy/shared/data-access/mongo-stor
 import { MongoStorageServiceProviderName } from '@breakable-toy/shared/data-access/mongo-storage';
 import { User } from './resources/user.dto';
 import { CreateUser } from './resources/create-user.dto';
-import { hash } from 'bcrypt';
 
 @Injectable()
 export class MongoUserService {
@@ -18,16 +17,13 @@ export class MongoUserService {
   }
 
   public async create(user: CreateUser): Promise<User> {
-    console.log(user);
-    const hashedPassword = await hash(user.password, 10);
+    // console.log(user);
     const newUser: User = {
       id: uuid(),
       username: user.username,
-      password: hashedPassword,
       alias: user.alias ?? '',
       email: user.email ?? '',
       createdAt: 0,
-      name: user.name ?? '',
     };
     return this.storageService.create(newUser);
   }

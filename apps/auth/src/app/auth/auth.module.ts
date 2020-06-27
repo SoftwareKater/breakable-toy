@@ -29,9 +29,9 @@ import { MongoConnectionOptions } from '@breakable-toy/shared/data-access/mongo-
     PassportModule,
     JwtModule.registerAsync({
       useFactory: (configService: ConfigService) => {
-        const jwtSecret = configService.get('authService.jwtSecret');
+        const jwtSecret = configService.get('authService.jwt.secret');
         const jwtExpiration = configService.get(
-          'authService.jwtExpirationTimeInSec'
+          'authService.jwt.expirationTimeInSec'
         );
         return {
           secret: jwtSecret,

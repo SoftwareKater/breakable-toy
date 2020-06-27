@@ -1,9 +1,20 @@
+import { ApiProperty } from '@nestjs/swagger';
+
 export class User {
-    id: string;         // unique
-    username: string;   // unique
-    alias: string;      // not unique
-    password: string;
-    name: string;       // not unique
-    email: string;      // not unique
-    createdAt: number;
+  @ApiProperty({
+    required: true,
+  })
+  id: string;
+
+  @ApiProperty()
+  username: string;
+  
+  @ApiProperty()
+  alias: string;
+  
+  @ApiProperty()
+  email: string;
+  
+  @ApiProperty()
+  createdAt: number;
 }
