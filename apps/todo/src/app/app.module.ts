@@ -1,39 +1,53 @@
-import { BrowserModule } from '@angular/platform-browser';
-import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
-
-import { AppComponent } from './app.component';
-import {
-  ConfigurationParameters,
-  ApiModule as TodoApiModule,
-  Configuration,
-} from '@breakable-toy/todo/data-access/todo-api-client';
+// Angular
 import { HttpClientModule } from '@angular/common/http';
+import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+
+// App
+import { AppComponent } from './app.component';
 import { MainModule } from './main/main.module';
-import { ApiModule as AuthApiModule } from '@breakable-toy/shared/data-access/auth-api-client';
 import { SharedModule } from './shared/shared.module';
 import { SessionService } from './shared/services/session.service';
 
-const apiConfigFactory = (): Configuration => {
-  const params: ConfigurationParameters = {
+// Api & Microservices
+import {
+  ApiModule as TodoApiModule,
+  Configuration as TodoApiConfig,
+  ConfigurationParameters as TodoApiConfigParams,
+} from '@breakable-toy/todo/data-access/todo-api-client';
+import {
+  ApiModule as AuthApiModule,
+  Configuration as AuthApiConfig,
+  ConfigurationParameters as AuthApiConfigParams,
+} from '@breakable-toy/shared/data-access/auth-api-client';
+import {
+  ApiModule as UserApiModule,
+  Configuration as UserApiConfig,
+  ConfigurationParameters as UserApiConfigParams,
+} from '@breakable-toy/shared/data-access/user-api-client';
+
+const todoApiConfigFactory = (): TodoApiConfig => {
+  const params: TodoApiConfigParams = {
     // set configuration parameters here.
     basePath: `//${location.host}`, // environment.apiBasePath + ':' + environment.apiPort,
   };
-  return new Configuration(params);
+  return new TodoApiConfig(params);
 };
 
-const authApiConfigFactory = (): Configuration => {
-  const params: ConfigurationParameters = {
-    basePath: `//${location.host}`,   // actual base path is different, handled by proxy.conf.json
+const authApiConfigFactory = (): AuthApiConfig => {
+  const params: AuthApiConfigParams = {
+    basePath: `//${location.host}`, // actual base path is different, handled by proxy.conf.json
   };
-  return new Configuration(params);
+  return new AuthApiConfig(params);
 };
 
 @NgModule({
   declarations: [AppComponent],
   imports: [
-    TodoApiModule.forRoot(apiConfigFactory),
+    TodoApiModule.forRoot(todoApiConfigFactory),
     AuthApiModule.forRoot(authApiConfigFactory),
+    UserApiModule,
     BrowserAnimationsModule,
     BrowserModule,
     HttpClientModule,
@@ -41,17 +55,17 @@ const authApiConfigFactory = (): Configuration => {
     SharedModule,
   ],
   providers: [
-    // {
-    //   provide: Configuration,
-    //   useFactory: (authService: AuthService) => new Configuration(
-    //     {
-    //       basePath: environment.apiUrl,
-    //       accessToken: authService.getAccessToken.bind(authService)
-    //     }
-    //   ),
-    //   deps: [AuthService],
-    //   multi: false
-    // }
+    {
+      provide: UserApiConfig,
+      useFactory: (sessionService: SessionService) => {
+        return new UserApiConfig({
+          basePath: `//${location.host}`, // actual base path is different, handled by proxy.conf.json
+          accessToken: sessionService.getAccessToken.bind(sessionService),
+        });
+      },
+      deps: [SessionService],
+      multi: false,
+    },
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   bootstrap: [AppComponent],

@@ -14,4 +14,8 @@ export class SessionService {
   set accessToken(value: any) {
     this._accessToken.next(value);
   }
+
+  public async getAccessToken(): Promise<string> {
+    return await this.accessToken$.toPromise();
+  }
 }

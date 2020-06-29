@@ -5,8 +5,8 @@ import {
   FormControl,
   Validators,
 } from '@angular/forms';
-import { AuthDialogOutput } from '../models/auth-dialog-output';
 import { AuthService } from '../auth.service';
+import { AuthDialogOutput } from '../../shared/models/auth-dialog-output';
 
 @Component({
   selector: 'skbt-log-in',
@@ -45,6 +45,7 @@ export class LogInComponent implements OnInit {
         this.logInOutput.emit({
           type: 'log-in',
           action: 'submit',
+          success: true,
           form: formValues,
         });
       } else {

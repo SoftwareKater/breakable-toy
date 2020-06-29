@@ -36,13 +36,16 @@
       "tags": ["scope:todo", "type:data-access"]
     },
     "auth": {
-      "tags": []
+      "tags": ["scope:shared"]
     },
     "user": {
-      "tags": []
+      "tags": ["scope:shared"]
     },
     "shared-data-access-auth-api-client": {
-      "tags": []
+      "tags": ["scope:shared", "type:data-access"]
+    },
+    "shared-data-access-user-api-client": {
+      "tags": ["scope:shared", "type:data-access"]
     }
   }
 }

@@ -26,6 +26,8 @@
     "dep-graph": "nx dep-graph",
     "help": "nx help",
     "postinstall": "ngcc --properties es2015 browser module main --first-only --create-ivy-entry-points",
+    "user-microservice": "start nx serve user",
+    "user:g:api-client": "openapi-generator generate -i tools/schematics/user.openapi.json -g typescript-angular -o libs/shared/data-access/user-api-client/src/lib",
     "auth-microservice": "start nx serve auth",
     "auth:g:api-client": "openapi-generator generate -i tools/schematics/auth.openapi.json -g typescript-angular -o libs/shared/data-access/auth-api-client/src/lib",
     "todo-app": "start nx serve todo && start nx serve todo-api",

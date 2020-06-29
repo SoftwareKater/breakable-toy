@@ -1,13 +1,14 @@
-import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { SignUpComponent } from './sign-up/sign-up.component';
+import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { ReactiveFormsModule } from '@angular/forms';
-import { LogInComponent } from './log-in/log-in.component';
-import { MatButtonModule } from '@angular/material/button';
-import { AuthService } from './auth.service';
+import { MatIconModule } from '@angular/material/icon';
+import { UserService } from './user.service';
 
-const COMPONENTS = [LogInComponent];
+const COMPONENTS = [SignUpComponent];
 
 @NgModule({
   declarations: [...COMPONENTS],
@@ -15,11 +16,11 @@ const COMPONENTS = [LogInComponent];
     CommonModule,
     MatButtonModule,
     MatFormFieldModule,
+    MatIconModule,
     MatInputModule,
     ReactiveFormsModule,
   ],
   exports: [...COMPONENTS],
-  schemas: [CUSTOM_ELEMENTS_SCHEMA],
-  providers: [AuthService],
+  providers: [UserService],
 })
-export class AuthModule {}
+export class UserModule {}

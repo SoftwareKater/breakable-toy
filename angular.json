@@ -385,6 +385,41 @@
           "style": "scss"
         }
       }
+    },
+    "shared-data-access-user-api-client": {
+      "projectType": "library",
+      "root": "libs/shared/data-access/user-api-client",
+      "sourceRoot": "libs/shared/data-access/user-api-client/src",
+      "prefix": "breakable-toy",
+      "architect": {
+        "lint": {
+          "builder": "@angular-devkit/build-angular:tslint",
+          "options": {
+            "tsConfig": [
+              "libs/shared/data-access/user-api-client/tsconfig.lib.json",
+              "libs/shared/data-access/user-api-client/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/shared/data-access/user-api-client/**"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/shared/data-access/user-api-client/jest.config.js",
+            "tsConfig": "libs/shared/data-access/user-api-client/tsconfig.spec.json",
+            "passWithNoTests": true,
+            "setupFile": "libs/shared/data-access/user-api-client/src/test-setup.ts"
+          }
+        }
+      },
+      "schematics": {
+        "@nrwl/angular:component": {
+          "style": "scss"
+        }
+      }
     }
   },
   "cli": {

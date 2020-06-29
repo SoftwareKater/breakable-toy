@@ -36,8 +36,7 @@ import { ConfigService } from '@nestjs/config';
       useFactory: (configService: ConfigService) => {
         const port = configService.get('authService.tcp.port');
         Logger.log(
-          'Communicating with Auth Microservice via tcp messages to http://localhost:' +
-            port
+          `Communicating with Auth Microservice via tcp messages to http://localhost:${port}`
         );
         return ClientProxyFactory.create({
           transport: Transport.TCP,

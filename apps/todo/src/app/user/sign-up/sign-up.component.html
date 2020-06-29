@@ -1,11 +1,11 @@
 <form class="sign-up-form" [formGroup]="signUpForm">
   <mat-form-field class="full-width">
     <mat-label>Username</mat-label>
-    <input matInput placeholder="" required value="" />
+    <input matInput placeholder="" required formControlName="username" />
     <mat-hint *ngIf="!passwordInput.value"
-    >You cannot change or recover this username</mat-hint
-  >  
-</mat-form-field>
+      >You cannot change or recover this username</mat-hint
+    >
+  </mat-form-field>
 
   <mat-form-field class="full-width"
     ><input
@@ -24,12 +24,12 @@
 
   <mat-form-field class="full-width">
     <mat-label>Alias</mat-label>
-    <input matInput placeholder="Displayed name" value="" />
+    <input matInput placeholder="Displayed name" formControlName="alias" />
   </mat-form-field>
 
   <mat-form-field class="full-width">
     <mat-label>Email</mat-label>
-    <input matInput placeholder="Email address" value="" />
+    <input matInput placeholder="Email address" formControlName="email" />
   </mat-form-field>
 
   <button mat-button (click)="dismiss()">Cancel</button>

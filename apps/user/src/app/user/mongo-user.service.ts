@@ -17,7 +17,12 @@ export class MongoUserService {
   }
 
   public async create(user: CreateUser): Promise<User> {
-    // console.log(user);
+    const nameConflict = await this.getByUsername(user.username);
+    if (nameConflict) {
+      throw Error(
+        `Cannot create another user with the username ${user.username}`
+      );
+    }
     const newUser: User = {
       id: uuid(),
       username: user.username,
@@ -25,16 +30,16 @@ export class MongoUserService {
       email: user.email ?? '',
       createdAt: 0,
     };
-    return this.storageService.create(newUser);
+    return await this.storageService.create(newUser);
   }
 
   public async getById(id: string): Promise<User> {
     const filter = this.filterFactory.forgeIdFilter(id);
-    return this.storageService.getOne(filter);
+    return await this.storageService.getOne(filter);
   }
 
   public async getByUsername(value: string): Promise<User> {
     const filter = this.filterFactory.forgeEqFilter('username', value);
-    return this.storageService.getOne(filter);
+    return await this.storageService.getOne(filter);
   }
 }

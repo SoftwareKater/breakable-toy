@@ -28,6 +28,8 @@ jobs:
         # Build and test the affected parts of the project
         npm install
         npm run lint
+        npm run auth:g:api-client
         npm run todo:g:api-client
+        npm run user:g:api-client
         npm run affected:build -- --base=origin/master --head=HEAD --parallel --maxParallel=2
         npm run affected:test -- --base=origin/master --head=HEAD --parallel --maxParallel=2

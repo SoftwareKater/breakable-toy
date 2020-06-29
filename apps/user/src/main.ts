@@ -14,7 +14,7 @@ async function bootstrap() {
   const configService = app.get<ConfigService>(ConfigService);
 
   // Microservice setup
-  const messagingPort = configService.get('userService.messagePort');
+  const messagingPort = configService.get('userService.tcp.port');
   app.connectMicroservice({
     transport: Transport.TCP,
     options: {
@@ -35,7 +35,7 @@ async function bootstrap() {
   SwaggerModule.setup(globalPrefix, app, document);
 
   // Start Service
-  const port = configService.get('userService.apiPort');
+  const port = configService.get('userService.api.port');
 
   await app.listen(port, () => {
     Logger.log('User Microservice listening at http://localhost:' + port + '/' + globalPrefix);
