@@ -1,16 +1,10 @@
+@import '../shared/styles/toolbar.scss';
+
 table {
   width: 100%;
   // margin: 8px;
 }
 
-.toolbar-spacer {
-  flex: 1 1 auto;
-}
-
 :host {
   padding-top: 16px;
-}
-
-.menu-button {
-  margin-left: 8px;
 }

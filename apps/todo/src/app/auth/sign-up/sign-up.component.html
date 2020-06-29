@@ -1,0 +1,37 @@
+<form class="sign-up-form" [formGroup]="signUpForm">
+  <mat-form-field class="full-width">
+    <mat-label>Username</mat-label>
+    <input matInput placeholder="" required value="" />
+    <mat-hint *ngIf="!passwordInput.value"
+    >You cannot change or recover this username</mat-hint
+  >  
+</mat-form-field>
+
+  <mat-form-field class="full-width"
+    ><input
+      matInput
+      placeholder="Password"
+      [type]="hide ? 'password' : 'text'"
+      formControlName="password"
+      required
+    /><mat-icon matSuffix (click)="hide = !hide">{{
+      hide ? 'visibility_off' : 'visibility'
+    }}</mat-icon>
+    <mat-hint *ngIf="!passwordInput.value"
+      >You cannot change or recover this password</mat-hint
+    >
+  </mat-form-field>
+
+  <mat-form-field class="full-width">
+    <mat-label>Alias</mat-label>
+    <input matInput placeholder="Displayed name" value="" />
+  </mat-form-field>
+
+  <mat-form-field class="full-width">
+    <mat-label>Email</mat-label>
+    <input matInput placeholder="Email address" value="" />
+  </mat-form-field>
+
+  <button mat-button (click)="dismiss()">Cancel</button>
+  <button mat-raised-button mat-primary (click)="submit()">Sign Up</button>
+</form>

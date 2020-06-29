@@ -75,7 +75,7 @@
     "@angular/language-service": "^9.1.0",
     "@nestjs/schematics": "^6.7.0",
     "@nestjs/swagger": "^4.5.8",
-    "@nestjs/testing": "^6.8.3",
+    "@nestjs/testing": "^6.11.11",
     "@nrwl/cypress": "9.3.0",
     "@nrwl/jest": "9.3.0",
     "@nrwl/nest": "^9.4.0",
