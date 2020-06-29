@@ -1,12 +1,12 @@
 import { Module } from '@nestjs/common';
-import { AuthService } from './auth.service';
+import { AuthService } from './services/auth.service';
 import { JwtModule } from '@nestjs/jwt';
 import { LocalStrategy } from './strategies/local.strategy';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { AuthController } from './auth.controller';
 import { ConfigService } from '@nestjs/config';
 import { MongoStorageModule } from '@breakable-toy/shared/data-access/mongo-storage';
-import { MongoAuthSubjectService } from './mongo-auth-subject.service';
+import { MongoAuthSubjectService } from './services/mongo-auth-subject.service';
 import { PassportModule } from '@nestjs/passport';
 import { MongoConnectionOptions } from '@breakable-toy/shared/data-access/mongo-storage';
 

@@ -4,9 +4,9 @@ import { v4 as uuid } from 'uuid';
 import { MongoFilterFactory } from '@breakable-toy/shared/data-access/mongo-storage';
 import { MongoStorageServiceProviderName } from '@breakable-toy/shared/data-access/mongo-storage';
 import { hash } from 'bcrypt';
-import { AuthSubject } from './resources/auth-subject.dto';
-import { CreateAuthSubject } from './resources/create-auth-subject.dto';
-import { PublicAuthSubject } from './resources/public-auth-subject.dto';
+import { AuthSubject } from '../resources/auth-subject.dto';
+import { CreateAuthSubject } from '../resources/create-auth-subject.dto';
+import { PublicAuthSubject } from '../resources/public-auth-subject.dto';
 
 @Injectable()
 export class MongoAuthSubjectService {

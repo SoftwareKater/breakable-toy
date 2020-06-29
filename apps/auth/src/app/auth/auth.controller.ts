@@ -8,7 +8,7 @@ import {
   Param,
   Request,
 } from '@nestjs/common';
-import { AuthService } from './auth.service';
+import { AuthService } from './services/auth.service';
 import { LocalAuthGuard } from './guards/local-auth.guard';
 import {
   MessagePattern,
@@ -30,7 +30,7 @@ import { Credentials } from './resources/credentials.dto';
 import { TokenResponse } from './resources/token-response.dto';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { CreateAuthSubject } from './resources/create-auth-subject.dto';
-import { MongoAuthSubjectService } from './mongo-auth-subject.service';
+import { MongoAuthSubjectService } from './services/mongo-auth-subject.service';
 import { PublicAuthSubject } from './resources/public-auth-subject.dto';
 import { AuthSubject } from './resources/auth-subject.dto';
 
@@ -53,9 +53,18 @@ export class AuthController {
   public async login(@Body() credentials: Credentials): Promise<TokenResponse> {
     Logger.verbose('[AuthController] login');
     try {
-      return await this.authService.login(credentials);
+      const token = await this.authService.login(credentials);
+      if (token && token !== '') {
+        const res: TokenResponse = {
+          accessToken: token,
+        }
+        return res;
+      } else {
+        return null;
+      }
     } catch (err) {
       Logger.error(`Token creation failed with error: ${err}`);
+      return null;
     }
   }
 
