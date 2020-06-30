@@ -1,0 +1,18 @@
+<form class="log-in-form" [formGroup]="logInForm">
+  <mat-form-field class="full-width">
+    <mat-label>Username</mat-label>
+    <input matInput placeholder="" formControlName="username" />
+  </mat-form-field>
+
+  <mat-form-field class="full-width">
+    <mat-label>Password</mat-label>
+
+    <input
+      matInput
+      type="password"
+      formControlName="password" 
+    />
+  </mat-form-field>
+  <button mat-button (click)="dismiss()">Cancel</button>
+  <button mat-raised-button mat-primary (click)="submit()">Log in</button>
+</form>

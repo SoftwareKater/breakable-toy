@@ -10,7 +10,7 @@ import {
   FindAndModifyWriteOpResultObject,
 } from 'mongodb';
 import { MongoResource } from './resources/mongo-resource.entity';
-import { MongoDbConnectionProviderName } from './constants';
+import { MongoConnectionProviderName, MongoStorageLibraryName } from './constants';
 import { MongoConnection } from './mongo-connection.service';
 
 @Injectable()
@@ -21,7 +21,7 @@ export class MongoStorageService<T extends MongoResource> {
   }
 
   constructor(
-    @Inject(MongoDbConnectionProviderName)
+    @Inject(MongoConnectionProviderName)
     private readonly mongoConnection: MongoConnection
   ) {}
 
@@ -34,7 +34,8 @@ export class MongoStorageService<T extends MongoResource> {
       this.collection.insertOne(newEntity, {}, (err, res) => {
         if (err || res.result.ok !== 1 || res.result.n !== 1) {
           Logger.error(
-            `InsertOne failed with code ${err.code}: ${err.message}`
+            `InsertOne failed with code ${err.code}: ${err.message}`,
+            MongoStorageLibraryName
           );
           reject(err);
         } else {
@@ -49,7 +50,8 @@ export class MongoStorageService<T extends MongoResource> {
       this.collection.deleteMany(filter, (err, res) => {
         if (err || res.result.ok !== 1) {
           Logger.error(
-            `DeleteMany failed with code ${err.code}: ${err.message}`
+            `DeleteMany failed with code ${err.code}: ${err.message}`,
+            MongoStorageLibraryName
           );
           reject(err);
         } else {
@@ -64,13 +66,15 @@ export class MongoStorageService<T extends MongoResource> {
       this.collection.deleteOne(filter, (err, res) => {
         if (err || res.result.ok !== 1) {
           Logger.error(
-            `DeleteOne failed with code ${err.code}: ${err.message}`
+            `DeleteOne failed with code ${err.code}: ${err.message}`,
+            MongoStorageLibraryName
           );
           reject(err);
         } else {
           if (res.deletedCount > 1) {
             Logger.warn(
-              'Deleted more than one item, this should lead to an error...'
+              'Deleted more than one item, this should lead to an error...',
+              MongoStorageLibraryName
             );
           }
           resolve(res.deletedCount);
@@ -129,7 +133,10 @@ export class MongoStorageService<T extends MongoResource> {
     return new Promise((resolve, reject) => {
       this.collection.findOne<T>(filter, {}, (err, res) => {
         if (err) {
-          Logger.error(`FindOne failed with code ${err.code}: ${err.message}`);
+          Logger.error(
+            `FindOne failed with code ${err.code}: ${err.message}`,
+            MongoStorageLibraryName
+          );
           reject(err);
         } else {
           resolve(res);
@@ -147,7 +154,8 @@ export class MongoStorageService<T extends MongoResource> {
         (err, res: FindAndModifyWriteOpResultObject<T>) => {
           if (err) {
             Logger.error(
-              `FindOneAndReplace failed with code ${err.code}: ${err.message}`
+              `FindOneAndReplace failed with code ${err.code}: ${err.message}`,
+              MongoStorageLibraryName
             );
             reject(err);
           } else {

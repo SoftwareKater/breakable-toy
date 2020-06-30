@@ -34,6 +34,18 @@
     },
     "todo-data-access-todo-api-client": {
       "tags": ["scope:todo", "type:data-access"]
+    },
+    "auth": {
+      "tags": ["scope:shared"]
+    },
+    "user": {
+      "tags": ["scope:shared"]
+    },
+    "shared-data-access-auth-api-client": {
+      "tags": ["scope:shared", "type:data-access"]
+    },
+    "shared-data-access-user-api-client": {
+      "tags": ["scope:shared", "type:data-access"]
     }
   }
 }

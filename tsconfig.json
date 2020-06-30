@@ -16,8 +16,14 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
+      "@breakable-toy/shared/data-access/auth-api-client": [
+        "libs/shared/data-access/auth-api-client/src/index.ts"
+      ],
       "@breakable-toy/shared/data-access/mongo-storage": [
         "libs/shared/data-access/mongo-storage/src/index.ts"
+      ],
+      "@breakable-toy/shared/data-access/user-api-client": [
+        "libs/shared/data-access/user-api-client/src/index.ts"
       ],
       "@breakable-toy/todo/data-access/todo-api-client": [
         "libs/todo/data-access/todo-api-client/src/index.ts"

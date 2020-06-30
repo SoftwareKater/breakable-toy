@@ -1,23 +1,23 @@
-<mat-toolbar>
-  <span>Todo</span>
+<mat-toolbar color='accent'>
+  <span>My Todos</span>
   <span class="toolbar-spacer"></span>
   <button
     mat-mini-fab
     color="primary"
     aria-label="Add new Todo"
-    class="menu-button"
+    class="toolbar-button"
     (click)="openDialog()"
   >
     <mat-icon>add</mat-icon>
   </button>
-  <!-- <button mat-mini-fab color="primary" aria-label="Options" class="menu-button">
+  <!-- <button mat-mini-fab color="primary" aria-label="Options" class="toolbar-button">
     <mat-icon>settings</mat-icon>
   </button> -->
   <button
     mat-mini-fab
     color="primary"
     aria-label="Delete all Done"
-    class="menu-button"
+    class="toolbar-button"
     (click)="deleteAllDone()"
   >
     <mat-icon>delete</mat-icon>

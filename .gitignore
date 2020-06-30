@@ -12,6 +12,8 @@
 # generated output
 # /tools/schematics/todo.openapi.json
 /libs/todo/data-access/todo-api-client/src/lib
+/libs/shared/data-access/auth-api-client/src/lib
+/libs/shared/data-access/user-api-client/src/lib
 
 # compiled output
 /dist

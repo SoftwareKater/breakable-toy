@@ -4,7 +4,13 @@ import { TodoController } from './todo.controller';
 import { MongoTodoService } from './mongo-todo.service';
 
 @Module({
-  imports: [MongoStorageModule],
+  imports: [
+    MongoStorageModule.register({
+      database: 'todo',
+      host: 'localhost',
+      port: 27017,
+    }),
+  ],
   controllers: [TodoController],
   providers: [MongoTodoService],
 })
