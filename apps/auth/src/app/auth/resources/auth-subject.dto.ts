@@ -6,6 +6,7 @@ export class AuthSubject extends OmitType(CreateAuthSubject, ['password']) {
   @ApiProperty({
     required: true,
     description: 'Unique identifier of the subject.',
+    example: '9505f7a6-7a78-4007-8c20-4c086270eb24'
   })
   id: string;
 
@@ -17,13 +18,7 @@ export class AuthSubject extends OmitType(CreateAuthSubject, ['password']) {
 
   @ApiProperty({
     required: false,
-    description:
-      'Granted, if subject is authenticated. (I think this is unnecessary)',
-  })
-  accessToken?: string;
-
-  @ApiProperty({
-    required: false,
+    example: 1593719763106,
   })
   createdAt?: number;
 }

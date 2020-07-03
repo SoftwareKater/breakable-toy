@@ -6,12 +6,21 @@ export class CreateAuthSubject extends Credentials {
   @ApiProperty({
     required: false,
     description: 'An alias to the username, to display in the frontend.',
+    example: 'Johnny',
   })
-  name?: string;
+  alias?: string;
 
   @ApiProperty({
     required: false,
     description: 'Email of the subject. Used by local strategy.',
+    example: 'john@doe.com',
   })
   email?: string;
+
+  @ApiProperty({
+    required: false,
+    description: 'Foreign id of an entity in the user microservice.',
+    example: '5c91de4e-316c-40a4-8321-9f15b3ceeea5',
+  })
+  userId?: string;
 }

@@ -52,15 +52,6 @@ async function bootstrap() {
   const host = configService.get('authService.api.host');
   const port = configService.get('authService.api.port');
   const options = new DocumentBuilder()
-    .addOAuth2({
-      type: 'oauth2',
-      flows: {
-        implicit: {
-          scopes: {},
-          authorizationUrl: `http://${host}:${port}/${globalPrefix}/auth`,
-        },
-      },
-    })
     .setTitle('Auth Microservice')
     .setDescription('Authenticate users via api calls and messages.')
     .setVersion('1.0')

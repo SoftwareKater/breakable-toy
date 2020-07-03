@@ -35,16 +35,16 @@ export class MongoAuthSubjectService {
             id: uuid(),
             username: subject.username,
             passwordHash: enc,
-            name: subject.name ?? '',
+            userId: subject.userId ?? '',
+            alias: subject.alias ?? '',
             email: subject.email ?? '',
-            accessToken: '',
             createdAt: new Date().getTime(),
           };
           const createdSubject = await this.storageService.create(newSubject);
           if (createdSubject) {
             delete createdSubject.passwordHash; // this should not leave the database
           } else {
-            throw Error('Failed to create the new auth subject')
+            reject(new Error('Failed to create the new auth subject'));
           }
           resolve(createdSubject);
         }
