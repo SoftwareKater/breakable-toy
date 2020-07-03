@@ -7,6 +7,8 @@ import {
 } from '@angular/forms';
 import { AuthService } from '../auth.service';
 import { AuthDialogOutput } from '../../shared/models/auth-dialog-output';
+import { MatSnackBar, MatSnackBarRef, SimpleSnackBar } from '@angular/material/snack-bar';
+import { ErrorStateMatcher } from '@angular/material/core';
 
 @Component({
   selector: 'skbt-log-in',
@@ -14,31 +16,36 @@ import { AuthDialogOutput } from '../../shared/models/auth-dialog-output';
   styleUrls: ['./log-in.component.scss'],
 })
 export class LogInComponent implements OnInit {
-  @Output()
-  logInOutput = new EventEmitter<AuthDialogOutput>();
 
-  logInForm: FormGroup = this.fb.group({
-    username: new FormControl('', [Validators.required]),
+  @Output()
+  public logInOutput = new EventEmitter<AuthDialogOutput>();
+
+  public logInForm: FormGroup = this.fb.group({
+    username: new FormControl('', []),
     password: new FormControl('', [Validators.required]),
   });
 
-  get username(): string {
+  private get username(): string {
     return this.logInForm.value.username;
   }
 
-  get password(): string {
+  private get password(): string {
     return this.logInForm.value.password;
   }
 
+  private loginErrorNotification: MatSnackBarRef<SimpleSnackBar>;
+
   constructor(
     private readonly fb: FormBuilder,
-    private readonly authService: AuthService
+    private readonly authService: AuthService,
+    private _snackBar: MatSnackBar
   ) {}
 
   ngOnInit(): void {}
 
   /** Validates the form and logs in the user */
   public async submit() {
+    this.dismissLoginErrorNotificationIfPresent()
     if (this.logInForm.valid === true) {
       if (await this.validateCredentials()) {
         const formValues = { username: this.username, password: this.password };
@@ -49,14 +56,28 @@ export class LogInComponent implements OnInit {
           form: formValues,
         });
       } else {
-        console.log('Incorrect username or password'); // display this as a warning!
+        this.loginErrorNotification = this._snackBar.open('Incorrect username or password', '', {
+          duration: 10e3,
+          politeness: 'assertive'
+          // horizontalPosition: 'center',
+          // verticalPosition: 'top',
+        });
       }
     }
   }
 
   /** Closes the dialog */
   public dismiss() {
+    this.dismissLoginErrorNotificationIfPresent()
     this.logInOutput.emit({ type: 'log-in', action: 'dismiss' });
+  }
+
+  /** Closes the login error notification if it is present */
+  private dismissLoginErrorNotificationIfPresent() {
+    if (this.loginErrorNotification) {
+      this.loginErrorNotification.dismiss()
+      this.loginErrorNotification = null;
+    }
   }
 
   private async validateCredentials(): Promise<boolean> {

@@ -28,6 +28,15 @@ async function bootstrap() {
     .setDescription('An api for a simple todo application.')
     .setVersion('1.0')
     .addTag('todo')
+    .addOAuth2({
+      type: 'oauth2',
+      flows: {
+        implicit: {
+          scopes: {},
+          authorizationUrl: `http://${authMicroserviceHost}:${authMicroservicePort}/api/auth/token`,
+        },
+      },
+    })
     .build();
   const document = SwaggerModule.createDocument(app, options);
   SwaggerModule.setup('api', app, document);

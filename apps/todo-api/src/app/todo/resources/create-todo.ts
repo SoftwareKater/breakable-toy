@@ -11,6 +11,13 @@ export class CreateTodo {
   value: string;
 
   @ApiProperty({
+    description: 'The user that created / owns the todo.',
+    example: '',
+    required: false,
+  })
+  userId: string;
+  
+  @ApiProperty({
     default: TodoPriority.Medium,
     enum: TodoPriority,
     example: TodoPriority.High,
@@ -27,10 +34,17 @@ export class CreateTodo {
 
   @ApiProperty({
     default: TodoStatus.Open,
-    description: 'The status of the todo',
+    description: 'The status of the todo.',
     example: TodoStatus.Done,
     enum: TodoStatus,
     required: false,
   })
   status?: TodoStatus;
+
+  @ApiProperty({
+    description: 'The deadline of the todo.',
+    example: '',
+    required: false,
+  })
+  deadline?: number;
 }

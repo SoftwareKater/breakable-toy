@@ -6,6 +6,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { LogInComponent } from './log-in/log-in.component';
 import { MatButtonModule } from '@angular/material/button';
 import { AuthService } from './auth.service';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 
 const COMPONENTS = [LogInComponent];
 
@@ -16,6 +17,7 @@ const COMPONENTS = [LogInComponent];
     MatButtonModule,
     MatFormFieldModule,
     MatInputModule,
+    MatSnackBarModule,
     ReactiveFormsModule,
   ],
   exports: [...COMPONENTS],

@@ -22,14 +22,32 @@
   >
     <mat-icon>delete</mat-icon>
   </button>
+  <button
+    mat-mini-fab
+    color="primary"
+    aria-label="Delete all Done"
+    class="toolbar-button"
+    (click)="deleteAllDone()"
+  >
+    <mat-icon>clear_all</mat-icon>
+  </button>
 </mat-toolbar>
+
+<mat-progress-bar mode="determinate" [value]="getProgress()"></mat-progress-bar>
 
 <table mat-table [dataSource]="todos" class="mat-elevation-z8">
   <ng-container matColumnDef="value">
-    <th mat-header-cell *matHeaderCellDef>Todo</th>
+    <th mat-header-cell *matHeaderCellDef>ToDo</th>
     <td mat-cell *matCellDef="let element">
       <s *ngIf="element.status === 'done'">{{ element.value }}</s>
       <span *ngIf="element.status === 'open'">{{ element.value }}</span>
+    </td>
+  </ng-container>
+
+  <ng-container matColumnDef="deadline">
+    <th mat-header-cell *matHeaderCellDef>Until</th>
+    <td mat-cell *matCellDef="let element">
+      <span>{{ element.deadline }}</span>
     </td>
   </ng-container>
 
@@ -39,19 +57,19 @@
       <mat-icon
         aria-hidden="false"
         aria-label="low"
-        *ngIf="element.prioriy === 'low'"
+        *ngIf="element.priority === 'low'"
         >keyboard_arrow_down</mat-icon
       >
       <mat-icon
         aria-hidden="false"
         aria-label="medium"
-        *ngIf="element.prioriy === 'medium'"
-        >add</mat-icon
+        *ngIf="element.priority === 'medium'"
+        >menu</mat-icon
       >
       <mat-icon
         aria-hidden="false"
         aria-label="high"
-        *ngIf="element.prioriy === 'high'"
+        *ngIf="element.priority === 'high'"
         >keyboard_arrow_up</mat-icon
       >
     </td>

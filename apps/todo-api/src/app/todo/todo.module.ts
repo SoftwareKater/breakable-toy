@@ -1,8 +1,9 @@
-import { Module } from '@nestjs/common';
+import { Module, Logger } from '@nestjs/common';
 import { MongoStorageModule, MongoConnectionOptions } from '@breakable-toy/shared/data-access/mongo-storage';
 import { TodoController } from './todo.controller';
 import { MongoTodoService } from './mongo-todo.service';
 import { ConfigService } from '@nestjs/config';
+import { ClientProxyFactory, Transport } from '@nestjs/microservices';
 
 @Module({
   imports: [
@@ -22,6 +23,26 @@ import { ConfigService } from '@nestjs/config';
     }),
   ],
   controllers: [TodoController],
-  providers: [MongoTodoService],
+  providers: [
+    MongoTodoService,
+    {
+      provide: 'AUTH_CLIENT',
+      useFactory: (configService: ConfigService) => {
+        const host = configService.get<string>('authService.tcp.host')
+        const port = configService.get<number>('authService.tcp.port');
+        Logger.log(
+          `Communicating with Auth Microservice via tcp messages to http://${host}:${port}`
+        );
+        return ClientProxyFactory.create({
+          transport: Transport.TCP,
+          options: {
+            host,
+            port,
+          },
+        });
+      },
+      inject: [ConfigService],
+    },
+  ],
 })
 export class TodoModule {}

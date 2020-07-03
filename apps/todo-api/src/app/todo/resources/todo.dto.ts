@@ -34,4 +34,17 @@ export class Todo {
     enum: TodoStatus,
   })
   status: TodoStatus;
+
+  @ApiProperty({
+    description: 'The deadline of the todo',
+    example: ''
+  })
+  deadline: number;
+  
+  @ApiProperty({
+    description: 'The user that created / owns the todo.',
+    example: '',
+    required: false,
+  })
+  userId: string;
 }

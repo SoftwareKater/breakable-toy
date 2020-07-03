@@ -5,30 +5,7 @@ import {
 import { Todo } from '@breakable-toy/todo/data-access/todo-api-client';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
-
-const DUMMY_TODOS: Todo[] = [
-  {
-    id: '1',
-    value: 'Work',
-    priority: 'high',
-    description: 'Cook a very delicious bowl of spaghetti bolognese.',
-    status: 'done',
-  },
-  {
-    id: '2',
-    value: 'Eat',
-    priority: 'medium',
-    description: 'Cook a very delicious bowl of spaghetti bolognese.',
-    status: 'open',
-  },
-  {
-    id: '3',
-    value: 'Sleep',
-    priority: 'low',
-    description: 'Cook a very delicious bowl of spaghetti bolognese.',
-    status: 'done',
-  },
-];
+import { SessionService } from '../shared/services/session.service';
 
 /**
  * Facade between the TodoComponent and the TodoAPI Backend. The database serves as the
@@ -43,7 +20,10 @@ export class TodoFacade {
     this._todos.next(value);
   }
 
-  constructor(private readonly todoService: TodoService) {}
+  constructor(
+    private readonly todoService: TodoService,
+    private readonly sessionService: SessionService
+  ) {}
 
   public async init() {
     await this.fetchAndUpdateTodos();
@@ -53,7 +33,7 @@ export class TodoFacade {
   public async deleteAllDone(): Promise<void> {
     try {
       const delRes = await this.todoService
-        .todoControllerDeleteByFilter(Todo.StatusEnum.Done)
+        .deleteByFilter(Todo.StatusEnum.Done)
         .toPromise();
       await this.fetchAndUpdateTodos();
     } catch (err) {
@@ -88,14 +68,11 @@ export class TodoFacade {
 
   /** Creates a new todo */
   public async createNewTodo(todo: CreateTodo = null): Promise<void> {
-    let created: Observable<Todo>;
-    if (todo !== null) {
-      created = this.todoService.todoControllerCreate(todo);
-    } else {
-      const randomIndex = Math.floor(Math.random() * 3);
-      const idx = randomIndex === 3 ? 2 : randomIndex;
-      created = this.todoService.todoControllerCreate(DUMMY_TODOS[idx]);
+    if (todo?.userId === null) {
+      const user = await this.sessionService.user$.toPromise()
+      todo.userId = user.id;
     }
+    const created = this.todoService.create(todo);    
     try {
       const res = await created.toPromise();
       await this.fetchAndUpdateTodos();
@@ -112,11 +89,11 @@ export class TodoFacade {
 
   /** Gets all todos */
   private getAllTodos(): Observable<Todo[]> {
-    return this.todoService.todoControllerGetAll();
+    return this.todoService.getAll();
   }
 
   /** Puts a todo */
   private updateTodo(todo: Todo): Observable<Todo> {
-    return this.todoService.todoControllerUpdate(todo.id, todo);
+    return this.todoService.update(todo.id, todo);
   }
 }

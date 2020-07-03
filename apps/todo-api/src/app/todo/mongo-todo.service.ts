@@ -23,6 +23,8 @@ export class MongoTodoService {
   public async create(todo: CreateTodo): Promise<Todo> {
     const newTodo: Todo = {
       id: uuid(),
+      userId: todo.userId,
+      deadline: todo.deadline ?? Infinity,
       description: todo.description ?? '',
       priority: todo.priority ?? TodoPriority.Medium,
       status: todo.status ?? TodoStatus.Open,

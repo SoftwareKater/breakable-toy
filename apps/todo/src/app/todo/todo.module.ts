@@ -12,6 +12,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { CreateTodoDialogComponent } from './create-todo/create-todo-dialog.component';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
 
 @NgModule({
   declarations: [TodoComponent, CreateTodoDialogComponent],
@@ -21,10 +22,11 @@ import { MatFormFieldModule } from '@angular/material/form-field';
     MatCheckboxModule,
     MatDialogModule,
     MatFormFieldModule,
-    MatTableModule,
     MatIconModule,
     MatInputModule,
+    MatTableModule,
     MatToolbarModule,
+    MatProgressBarModule,
     ReactiveFormsModule,
   ],
   exports: [TodoComponent],

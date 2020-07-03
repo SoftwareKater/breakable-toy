@@ -19,7 +19,7 @@ export class AuthService {
     };
     try {
       const res = await this.authApiService
-        .authControllerLogin(credentials)
+        .login(credentials)
         .toPromise();
       if (res?.accessToken) {
         this.sessionService.accessToken = res.accessToken;

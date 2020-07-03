@@ -44,18 +44,22 @@ export class TodoComponent implements OnInit {
     this.todoFacade.createNewTodo(todo);
   }
 
+  public getProgress(): number {
+    return  100 * this.todos.filter(t => t.status === 'done').length / this.todos.length;
+  }
+
   public openDialog(): void {
     const dialogConfig = new MatDialogConfig();
     dialogConfig.disableClose = true;
     dialogConfig.autoFocus = true;
     dialogConfig.width = '350px';
 
-    const resumeGameDialogRef = this.dialog.open(
+    const createTodoDialogRef = this.dialog.open(
       CreateTodoDialogComponent,
       dialogConfig
     );
 
-    resumeGameDialogRef.afterClosed().subscribe((result: CreateTodo) => {
+    createTodoDialogRef.afterClosed().subscribe((result: CreateTodo) => {
       if (result === null) {
         return;
       } else {

@@ -1,11 +1,12 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
+import { User } from '@breakable-toy/shared/data-access/user-api-client';
 
 @Injectable()
 export class SessionService {
-  _user: BehaviorSubject<any> = new BehaviorSubject(null);
-  user$: Observable<any> = this._user.asObservable();
-  set user(value: any) {
+  _user: BehaviorSubject<User> = new BehaviorSubject(null);
+  user$: Observable<User> = this._user.asObservable();
+  set user(value: User) {
     this._user.next(value);
   }
 
@@ -13,9 +14,6 @@ export class SessionService {
   accessToken$: Observable<string> = this._accessToken.asObservable();
   set accessToken(value: any) {
     this._accessToken.next(value);
-  }
-
-  public async getAccessToken(): Promise<string> {
-    return await this.accessToken$.toPromise();
+    sessionStorage.setItem('access_token', value);
   }
 }

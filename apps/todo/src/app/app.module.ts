@@ -57,10 +57,21 @@ const authApiConfigFactory = (): AuthApiConfig => {
   providers: [
     {
       provide: UserApiConfig,
-      useFactory: (sessionService: SessionService) => {
+      useFactory: () => {
         return new UserApiConfig({
           basePath: `//${location.host}`, // actual base path is different, handled by proxy.conf.json
-          accessToken: sessionService.getAccessToken.bind(sessionService),
+          accessToken: () => sessionStorage.getItem('access_token'),
+        });
+      },
+      deps: [SessionService],
+      multi: false,
+    },
+    {
+      provide: TodoApiConfig,
+      useFactory: () => {
+        return new UserApiConfig({
+          basePath: `//${location.host}`, // actual base path is different, handled by proxy.conf.json
+          accessToken: () => sessionStorage.getItem('access_token'),
         });
       },
       deps: [SessionService],
