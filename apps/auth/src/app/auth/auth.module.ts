@@ -15,8 +15,8 @@ import { MongoConnectionOptions } from '@breakable-toy/shared/data-access/mongo-
     MongoStorageModule.registerAsync({
       useFactory: (configService: ConfigService) => {
         const database = configService.get<string>('authService.database.name');
-        const host = configService.get<string>('authService.database.host');
-        const port = configService.get<number>('authService.database.port');
+        const host = configService.get<string>('todoApp.database.host');
+        const port = configService.get<number>('todoApp.database.port');
         const options: MongoConnectionOptions = {
           database,
           host,

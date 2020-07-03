@@ -29,7 +29,7 @@ async function bootstrap() {
   );
 
   // Connect to message broker
-  const url = configService.get<string>('authService.rmq.url');
+  const url = configService.get<string>('todoApp.rmq.url');
   const queues = configService.get<string>('authService.rmq.queues').split(',');
   for (const queue of queues) {
     app.connectMicroservice<MicroserviceOptions>({

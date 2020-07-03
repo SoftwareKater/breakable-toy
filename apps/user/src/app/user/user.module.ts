@@ -1,7 +1,7 @@
 import { Module, Logger } from '@nestjs/common';
 import { MongoUserService } from './mongo-user.service';
 import { UserController } from './user.controller';
-import { MongoStorageModule } from '@breakable-toy/shared/data-access/mongo-storage';
+import { MongoStorageModule, MongoConnectionOptions } from '@breakable-toy/shared/data-access/mongo-storage';
 import {
   ClientProxyFactory,
   Transport,
@@ -10,10 +10,19 @@ import {
 import { ConfigService } from '@nestjs/config';
 @Module({
   imports: [
-    MongoStorageModule.register({
-      database: 'user',
-      host: 'localhost',
-      port: 27017,
+    MongoStorageModule.registerAsync({
+      useFactory: (configService: ConfigService) => {
+        const database = configService.get<string>('userService.database.name');
+        const host = configService.get<string>('todoApp.database.host');
+        const port = configService.get<number>('todoApp.database.port');
+        const options: MongoConnectionOptions = {
+          database,
+          host,
+          port,
+        };
+        return options;
+      },
+      inject: [ConfigService],
     }),
     ClientsModule.register([
       {

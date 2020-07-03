@@ -8,14 +8,21 @@ import { NestFactory } from '@nestjs/core';
 
 import { AppModule } from './app/app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { ConfigService } from '@nestjs/config';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const globalPrefix = 'api';
   app.setGlobalPrefix(globalPrefix);
   const port = process.env.PORT || 3333;
-  
+  const configService = app.get<ConfigService>(ConfigService);
+
+  // Start all microservices connections
+  await app.startAllMicroservicesAsync();
+
   // Swagger
+  const authMicroserviceHost = configService.get('authService.api.host');
+  const authMicroservicePort = configService.get('authService.api.port');
   const options = new DocumentBuilder()
     .setTitle('Todo API')
     .setDescription('An api for a simple todo application.')
