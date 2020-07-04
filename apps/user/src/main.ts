@@ -13,17 +13,6 @@ async function bootstrap() {
 
   const configService = app.get<ConfigService>(ConfigService);
 
-  // Microservice setup
-  const messagingPort = configService.get('userService.tcp.port');
-  app.connectMicroservice({
-    transport: Transport.TCP,
-    options: {
-      host: 'localhost',
-      port: messagingPort,
-    },
-  });
-  await app.startAllMicroservicesAsync();
-
   // Swagger
   const options = new DocumentBuilder()
     .setTitle('User Management Hybridservice')
@@ -35,11 +24,10 @@ async function bootstrap() {
   SwaggerModule.setup(globalPrefix, app, document);
 
   // Start Service
+  const host = configService.get('userService.api.host');
   const port = configService.get('userService.api.port');
-
   await app.listen(port, () => {
-    Logger.log('User Microservice listening at http://localhost:' + port + '/' + globalPrefix);
-    Logger.log('User Microservice accepts messages at http://localhost:' + messagingPort)
+    Logger.log(`User Microservice listening at http://${host}:${port}/${globalPrefix}`);
   });
 }
 

@@ -49,18 +49,18 @@ async function bootstrap() {
   await app.startAllMicroservicesAsync();
 
   // Swagger
-  const host = configService.get('authService.api.host');
-  const port = configService.get('authService.api.port');
   const options = new DocumentBuilder()
-    .setTitle('Auth Microservice')
-    .setDescription('Authenticate users via api calls and messages.')
-    .setVersion('1.0')
-    .addTag('auth')
-    .build();
+  .setTitle('Auth Microservice')
+  .setDescription('Authenticate users via api calls and messages.')
+  .setVersion('1.0')
+  .addTag('auth')
+  .build();
   const document = SwaggerModule.createDocument(app, options);
   SwaggerModule.setup(globalPrefix, app, document);
-
+  
   // Start Service
+  const host = configService.get('authService.api.host');
+  const port = configService.get('authService.api.port');
   await app.listen(port, () => {
     Logger.log(
       `Listening to api calls at http://${host}:${port}/${globalPrefix}`,

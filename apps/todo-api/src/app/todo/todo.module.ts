@@ -4,9 +4,11 @@ import { TodoController } from './todo.controller';
 import { MongoTodoService } from './mongo-todo.service';
 import { ConfigService } from '@nestjs/config';
 import { ClientProxyFactory, Transport } from '@nestjs/microservices';
+import {JwtModule} from '@nestjs/jwt';
 
 @Module({
   imports: [
+    JwtModule.register({}), // we do not want to sign or verify, but just decode tokens -> no secret needed
     MongoStorageModule.registerAsync({
       useFactory: (configService: ConfigService) => {
         const database = configService.get<string>('todoService.database.name');

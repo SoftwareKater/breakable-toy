@@ -11,7 +11,7 @@ export class UserService {
 
   public async createUser(user: CreateUser): Promise<User> {
     const newUser = await this.userApiService
-      .userControllerCreate(user)
+      .create(user)
       .toPromise();
     return newUser;
   }

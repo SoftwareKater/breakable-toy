@@ -33,6 +33,12 @@ export class MongoUserService {
     return await this.storageService.create(newUser);
   }
 
+  public async delete(id: string): Promise<boolean> {
+    const filter = this.filterFactory.forgeIdFilter(id);
+    await this.storageService.deleteOne(filter);
+    return true;
+  }
+
   public async getById(id: string): Promise<User> {
     const filter = this.filterFactory.forgeIdFilter(id);
     return await this.storageService.getOne(filter);

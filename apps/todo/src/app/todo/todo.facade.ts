@@ -6,6 +6,7 @@ import { Todo } from '@breakable-toy/todo/data-access/todo-api-client';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { SessionService } from '../shared/services/session.service';
+import { User } from 'libs/shared/data-access/user-api-client/src/lib';
 
 /**
  * Facade between the TodoComponent and the TodoAPI Backend. The database serves as the
@@ -20,6 +21,8 @@ export class TodoFacade {
     this._todos.next(value);
   }
 
+  private loggedInUser: User;
+
   constructor(
     private readonly todoService: TodoService,
     private readonly sessionService: SessionService
@@ -27,6 +30,9 @@ export class TodoFacade {
 
   public async init() {
     await this.fetchAndUpdateTodos();
+    this.sessionService.user$.subscribe((user) => {
+      this.loggedInUser = user;
+    });
   }
 
   /** Delete all todos that are marked as done (have status === 'done') */
@@ -67,12 +73,14 @@ export class TodoFacade {
   }
 
   /** Creates a new todo */
-  public async createNewTodo(todo: CreateTodo = null): Promise<void> {
-    if (todo?.userId === null) {
-      const user = await this.sessionService.user$.toPromise()
-      todo.userId = user.id;
+  public async createNewTodo(todo: CreateTodo): Promise<void> {
+    try {
+      todo.userId = this.loggedInUser.id;
+    } catch (err) {
+      console.error('You have to log in to create todo'); //TODO: Display that!!!
+      return;
     }
-    const created = this.todoService.create(todo);    
+    const created = this.todoService.create(todo);
     try {
       const res = await created.toPromise();
       await this.fetchAndUpdateTodos();

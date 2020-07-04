@@ -8,7 +8,7 @@ This project is comprised of different microservices, libraries and frontend app
 | mongo-storage   | Nest Library    | `libs/shared/data-access/mongo-storage`   | Generic storage service                              |
 | todo            | Angular App     | `apps/todo`                               | Frontend for the todo app                            |
 | todo-api        | Microservice    | `apps/todo-api`                           | Serves the API for the todo app                      |
-| User            | Microservice    | `apps/user`                               | Handles auth users                                   |
+| User            | Microservice    | `apps/user`                               | Handles users                                        |
 |                 |                 |                                           |                                                      |
 | auth-api-client | Angular Library | `libs/shared/data-access/auth-api-client` | Generated                                            |
 | user-api-client | Angular Library | `libs/shared/data-access/user-api-client` | Generated                                            |

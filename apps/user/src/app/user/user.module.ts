@@ -8,8 +8,11 @@ import {
   ClientsModule,
 } from '@nestjs/microservices';
 import { ConfigService } from '@nestjs/config';
+import { JwtModule } from '@nestjs/jwt';
+
 @Module({
   imports: [
+    JwtModule.register({}), // we only want to decode tokens -> no secret needed
     MongoStorageModule.registerAsync({
       useFactory: (configService: ConfigService) => {
         const database = configService.get<string>('userService.database.name');

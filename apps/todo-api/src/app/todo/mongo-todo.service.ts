@@ -43,6 +43,14 @@ export class MongoTodoService {
     return (await this.storageService.deleteMany(filter)) > 0;
   }
 
+  public async deleteByStatusAndUserId(status: TodoStatus, userId: string): Promise<boolean> {
+    const statusFilter = this.filterFactory.forgeEqFilter<TodoStatus>('status', status);
+    const userIdFilter = this.filterFactory.forgeEqFilter<string>('userId', userId);
+    const filter = {...statusFilter, ...userIdFilter};
+    return (await this.storageService.deleteMany(filter)) > 0;
+  }
+
+
   public async getAll(): Promise<Todo[]> {
     return this.storageService.getMany({});
   }
@@ -50,6 +58,11 @@ export class MongoTodoService {
   public async getById(id: string): Promise<Todo> {
     const filter = this.filterFactory.forgeIdFilter(id);
     return this.storageService.getOne(filter);
+  }
+
+  public async getByUserId(userId: string): Promise<Todo[]> {
+    const filter = this.filterFactory.forgeEqFilter('userId', userId);
+    return this.storageService.getMany(filter);
   }
 
   public async update(id: string, todo: UpdateTodo): Promise<Todo> {

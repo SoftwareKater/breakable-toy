@@ -63,7 +63,8 @@ export class AuthService {
 
   /** Verifies a jwt access token */
   public async validateToken(jwt: string): Promise<any> {
-    return await this.jwtService.verifyAsync(jwt);
+    const verif: JwtPayload = await this.jwtService.verifyAsync(jwt);
+    return verif;
   }
 
   /** Wrapper around bcrypt compare method */
