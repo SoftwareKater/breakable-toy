@@ -21,7 +21,7 @@ export class JwtAuthGuard implements CanActivate {
     return new Promise(async (resolve, reject) => {
       try {
         const res = await this.authService.validateToken(accessToken);
-        if (res !== null && res !== false) {
+        if (res) {
           Logger.verbose('Token is valid', 'JwtAuthGuard');
           resolve(true);
         } else {

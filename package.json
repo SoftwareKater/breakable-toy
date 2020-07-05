@@ -30,12 +30,12 @@
     "user:g:api-client": "openapi-generator generate -i tools/schematics/user.openapi.json -g typescript-angular -o libs/shared/data-access/user-api-client/src/lib",
     "auth-microservice": "start nx serve auth",
     "auth:g:api-client": "openapi-generator generate -i tools/schematics/auth.openapi.json -g typescript-angular -o libs/shared/data-access/auth-api-client/src/lib",
-    "todo-app": "start nx serve todo && start nx serve todo-api",
-    "todo:g:openapi": "nx serve api && wget http://localhost:3333/api-json && paste body to tools/schematics/openapi.json",
     "todo:g:api-client": "openapi-generator generate -i tools/schematics/todo.openapi.json -g typescript-angular -o libs/todo/data-access/todo-api-client/src/lib",
     "todo:cp:frontend": "cp -r ./apps/todo/* ./docker/todo-app/todo/src/apps/todo && cp -r angular.json package*.json tsconfig.json ./docker/todo-app/todo/src && cp -r ./libs/todo/data-access/todo-api-client/* ./docker/todo-app/todo/src/libs/todo/data-access/todo-api-client",
     "todo:cp:backend": "cp -r ./apps/todo-api/* ./docker/todo-app/todo-api/src/apps/todo-api && cp -r ./libs/shared/data-access/mongo-storage/*  ./docker/todo-app/todo-api/src/libs/shared/data-access/mongo-storage && cp -r angular.json nx.json package*.json tsconfig.json ./docker/todo-app/todo-api/src",
-    "todo:docker:prod": "npm run todo:cp:frontend && npm run todo:cp:backend && cd docker/todo-app && docker-compose up --build"
+    "todo:docker:prod": "npm run todo:cp:frontend && npm run todo:cp:backend && cd docker/todo-app && docker-compose up --build",
+    "todo-app:g:api-clients": "npm run auth:g:api-client && npm run user:g:api-client && npm run todo:g:api-client",
+    "todo-app:serve": "start nx serve todo && start nx serve todo-api && start nx serve user && start nx serve auth"
   },
   "private": true,
   "dependencies": {

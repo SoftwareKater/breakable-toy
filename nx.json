@@ -46,6 +46,9 @@
     },
     "shared-data-access-user-api-client": {
       "tags": ["scope:shared", "type:data-access"]
+    },
+    "shared-util-auth-utils": {
+      "tags": []
     }
   }
 }

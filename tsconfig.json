@@ -27,6 +27,9 @@
       ],
       "@breakable-toy/todo/data-access/todo-api-client": [
         "libs/todo/data-access/todo-api-client/src/index.ts"
+      ],
+      "@breakable-toy/shared/util/auth-utils": [
+        "libs/shared/util/auth-utils/src/index.ts"
       ]
     }
   },

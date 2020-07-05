@@ -4,7 +4,8 @@ import { compare } from 'bcrypt';
 import { AuthSubject } from '../resources/auth-subject.dto';
 import { Credentials } from '../resources/credentials.dto';
 import { MongoAuthSubjectService } from './mongo-auth-subject.service';
-import { JwtPayload } from '../resources/jwt-payload';
+import { JwtPayload } from '@breakable-toy/shared/util/auth-utils';
+import { PublicAuthSubject } from '../resources/public-auth-subject.dto';
 
 @Injectable()
 export class AuthService {
@@ -47,7 +48,7 @@ export class AuthService {
     Logger.verbose(
       `Creating jwt for auth subject with name ${credentials.username}`
     );
-    const subject: AuthSubject = await this.subjectService.getByUsernameOmitPasswordHash(
+    const subject: PublicAuthSubject = await this.subjectService.getByUsernameOmitPasswordHash(
       credentials.username
     );
     if (subject === null) {
@@ -62,7 +63,7 @@ export class AuthService {
   }
 
   /** Verifies a jwt access token */
-  public async validateToken(jwt: string): Promise<any> {
+  public async validateToken(jwt: string): Promise<JwtPayload> {
     const verif: JwtPayload = await this.jwtService.verifyAsync(jwt);
     return verif;
   }

@@ -1,4 +1,4 @@
-import { PublicAuthSubject } from './public-auth-subject.dto';
+import { PublicAuthSubject } from './public-auth-subject.interface';
 
 export interface JwtPayload {
   subject: PublicAuthSubject;

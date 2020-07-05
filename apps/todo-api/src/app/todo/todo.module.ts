@@ -1,14 +1,37 @@
-import { Module, Logger } from '@nestjs/common';
-import { MongoStorageModule, MongoConnectionOptions } from '@breakable-toy/shared/data-access/mongo-storage';
+import { Module } from '@nestjs/common';
+import {
+  MongoStorageModule,
+  MongoConnectionOptions,
+} from '@breakable-toy/shared/data-access/mongo-storage';
 import { TodoController } from './todo.controller';
 import { MongoTodoService } from './mongo-todo.service';
 import { ConfigService } from '@nestjs/config';
-import { ClientProxyFactory, Transport } from '@nestjs/microservices';
-import {JwtModule} from '@nestjs/jwt';
+import {
+  AuthUtilsModule,
+  AuthUtilsModuleOptions,
+} from '@breakable-toy/shared/util/auth-utils';
 
 @Module({
   imports: [
-    JwtModule.register({}), // we do not want to sign or verify, but just decode tokens -> no secret needed
+    // AuthUtilsModule.register({ tcpPort: 4000 }),
+    AuthUtilsModule.registerAsync({
+      useFactory: (configService: ConfigService) => {
+        const tcpHost = configService.get<string>('authService.tcp.host');
+        const tcpPort = configService.get<number>('authService.tcp.port');
+        const jwtSecret = configService.get<string>('authService.jwt.secret');
+        const jwtExpiration = configService.get<string>(
+          'authService.jwt.jwtExpirationInSec'
+        );
+        const options: AuthUtilsModuleOptions = {
+          tcpHost: tcpHost,
+          tcpPort: tcpPort,
+          jwtSecret,
+          jwtExpiration,
+        };
+        return options;
+      },
+      inject: [ConfigService],
+    }),
     MongoStorageModule.registerAsync({
       useFactory: (configService: ConfigService) => {
         const database = configService.get<string>('todoService.database.name');
@@ -25,26 +48,6 @@ import {JwtModule} from '@nestjs/jwt';
     }),
   ],
   controllers: [TodoController],
-  providers: [
-    MongoTodoService,
-    {
-      provide: 'AUTH_CLIENT',
-      useFactory: (configService: ConfigService) => {
-        const host = configService.get<string>('authService.tcp.host')
-        const port = configService.get<number>('authService.tcp.port');
-        Logger.log(
-          `Communicating with Auth Microservice via tcp messages to http://${host}:${port}`
-        );
-        return ClientProxyFactory.create({
-          transport: Transport.TCP,
-          options: {
-            host,
-            port,
-          },
-        });
-      },
-      inject: [ConfigService],
-    },
-  ],
+  providers: [MongoTodoService],
 })
 export class TodoModule {}

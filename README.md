@@ -5,10 +5,11 @@ This project is comprised of different microservices, libraries and frontend app
 | Component       | Type            | Path                                      | Description                                          |
 | --------------- | --------------- | ----------------------------------------- | ---------------------------------------------------- |
 | auth            | Microservice    | `apps/auth`                               | Handles auth subjects, authentication, access tokens |
+| auth-utils      | Nest Library    | `libs/shared/util/auth-utils`             | Provides types, guards and other utilities           |
 | mongo-storage   | Nest Library    | `libs/shared/data-access/mongo-storage`   | Generic storage service                              |
 | todo            | Angular App     | `apps/todo`                               | Frontend for the todo app                            |
 | todo-api        | Microservice    | `apps/todo-api`                           | Serves the API for the todo app                      |
-| User            | Microservice    | `apps/user`                               | Handles users                                        |
+| user            | Microservice    | `apps/user`                               | Handles users                                        |
 |                 |                 |                                           |                                                      |
 | auth-api-client | Angular Library | `libs/shared/data-access/auth-api-client` | Generated                                            |
 | user-api-client | Angular Library | `libs/shared/data-access/user-api-client` | Generated                                            |
@@ -18,13 +19,18 @@ This project is comprised of different microservices, libraries and frontend app
 
 ### Run it
 
-Start a MongoDB and a Rabbit MQ. Start the Mircoservices, the API and the frontend with
+Start a MongoDB and a Rabbit MQ.
+
+Build the api clients with
 
 ```shell
-nx serve auth
-nx serve user
-nx serve todo-api
-nx serve todo
+npm run todo-app:g:api-clients
+```
+
+Start the Mircoservices, the API and the frontend with
+
+```shell
+npm run todo-app:serve
 ```
 
 Visit you browser at `http://localhost:4200`.
@@ -40,3 +46,4 @@ You can configure the services via environment variables, but most config values
 | USER_SERVICE_API_PORT         | `3010`                  |                             |
 | TODO_SERVICE_API_PORT         | `3333`                  |                             |
 | TODO_APP_RMQ_URL              | `http://localhost:5672` | Rabbit MQ connection string |
+| TODO_SERVICE_DATABASE_PORT    | `27017`                 | Mongo DB port               |

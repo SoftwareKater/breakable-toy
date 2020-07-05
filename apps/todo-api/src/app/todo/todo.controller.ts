@@ -10,10 +10,7 @@ import {
   Logger,
   UseGuards,
   ForbiddenException,
-  Req,
-  Request,
   Headers,
-  Session,
   InternalServerErrorException,
 } from '@nestjs/common';
 import { MongoTodoService } from './mongo-todo.service';
@@ -24,26 +21,24 @@ import {
   ApiQuery,
   ApiOperation,
   ApiOAuth2,
-  ApiNoContentResponse,
 } from '@nestjs/swagger';
 import { Todo } from './resources/todo.dto';
 import { CreateTodo } from './resources/create-todo';
 import { TodoStatus } from './resources/todo-status.enum';
 import { UpdateTodo } from './resources/update-todo';
-import { AuthGuard } from '../guards/auth.guard';
-import { JwtService } from '@nestjs/jwt';
+import { TokenUtilsService, JwtAuthGuard } from '@breakable-toy/shared/util/auth-utils';
 
 @ApiTags('todo')
 @Controller('todo')
 export class TodoController {
   constructor(
     private readonly todoService: MongoTodoService,
-    private readonly jwtService: JwtService
+    private readonly tokenUtilService: TokenUtilsService
   ) {}
 
   @Post('')
   @ApiOAuth2([])
-  @UseGuards(AuthGuard)
+  @UseGuards(JwtAuthGuard)
   @ApiOperation({ operationId: 'create', description: 'Create a new todo.' })
   @ApiCreatedResponse({
     type: Todo,
@@ -63,7 +58,7 @@ export class TodoController {
 
   @Delete('')
   @ApiOAuth2([])
-  @UseGuards(AuthGuard)
+  @UseGuards(JwtAuthGuard)
   @ApiOperation({
     operationId: 'deleteByFilter',
     description: 'Delete todos by a filter.',
@@ -77,7 +72,7 @@ export class TodoController {
     @Query('status') status: TodoStatus,
     @Headers() headers: any
   ): Promise<boolean> {
-    const userId = this.getUserIdFromHeader(headers);
+    const userId = this.tokenUtilService.extractUserIdFromHeader(headers);
     return new Promise(async (resolve, reject) => {
       try {
         const deleteRes = await this.todoService.deleteByStatus(status);
@@ -91,7 +86,7 @@ export class TodoController {
 
   @Get('all-users')
   @ApiOAuth2(['todo:read:all'])
-  @UseGuards(AuthGuard)
+  @UseGuards(JwtAuthGuard)
   @ApiOperation({
     operationId: 'getForAllUsers',
     description: 'Get all todos for all users.',
@@ -111,11 +106,11 @@ export class TodoController {
 
   @Get('')
   @ApiOAuth2([])
-  @UseGuards(AuthGuard)
+  @UseGuards(JwtAuthGuard)
   @ApiOperation({ operationId: 'getAll', description: 'Get all your todos.' })
   @ApiOkResponse({ isArray: true, type: Todo })
   public async getMy(@Headers() headers: any): Promise<Todo[]> {
-    const userId = this.getUserIdFromHeader(headers);
+    const userId = this.tokenUtilService.extractUserIdFromHeader(headers);
 
     return new Promise(async (resolve, reject) => {
       try {
@@ -130,7 +125,7 @@ export class TodoController {
 
   @Put(':id')
   @ApiOAuth2([])
-  @UseGuards(AuthGuard)
+  @UseGuards(JwtAuthGuard)
   @ApiOperation({
     operationId: 'update',
     description: 'Update one of your todos.',
@@ -141,17 +136,20 @@ export class TodoController {
     @Body() todo: UpdateTodo,
     @Headers() headers: any
   ): Promise<Todo> {
-    const userIdFromToken = this.getUserIdFromHeader(headers);
+    const token = this.tokenUtilService.extractTokenFromHeader(headers);
 
-    let originalCreator
+    let originalCreator;
     try {
       originalCreator = (await this.todoService.getById(id)).userId;
     } catch {
+      Logger.error('Cannot validate that the updater is the original creator.');
       throw new InternalServerErrorException();
     }
-    if (!this.userIdsMatch(originalCreator, userIdFromToken)) {
+    if (!this.tokenUtilService.userIdsMatch(token, originalCreator)) {
+      Logger.error('Only the original creator may update this todo.');
       throw new ForbiddenException();
     }
+
     Logger.verbose(`Updating Todo with id ${id}`);
     return new Promise(async (resolve, reject) => {
       try {
@@ -162,28 +160,5 @@ export class TodoController {
         reject(err);
       }
     });
-  }
-
-  private userIdsMatch(userIdFromTodo, userIdFromToken): boolean {
-    if (userIdFromTodo === userIdFromToken) {
-      return true;
-    }
-    return false;
-  }
-
-  private extractTokenFromHeader(headers: any): string {
-    return headers?.authorization?.split(' ')[1];
-  }
-
-  private getUserIdFromHeader(headers: any): string {
-    const token = this.extractTokenFromHeader(headers);
-    const userId = this.getUserIdFromToken(token);
-    return userId;
-  }
-
-  private getUserIdFromToken(accessToken: string): string {
-    const decodedToken: any = this.jwtService.decode(accessToken);
-    const id = decodedToken.subject.userId;
-    return id;
   }
 }
