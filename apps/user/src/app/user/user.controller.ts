@@ -54,7 +54,7 @@ export class UserController {
 
     Logger.verbose(`Emitting EVT_USER_CREATED event.`);
     const result = this.userQueue
-      .send<any, any>('EVT_USER_CREATED', {
+      .send<any, CreateUser>('EVT_USER_CREATED', {
         ...newUser,
         password: user.password,
       })
